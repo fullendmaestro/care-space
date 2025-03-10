@@ -23,7 +23,7 @@ export default function Pagination({
   onLastPage,
 }: PaginationProps) {
   return (
-    <div className="flex justify-between items-center mt-4">
+    <div className="flex justify-between items-center mt-4 max-w-6xl mx-auto">
       <div className="text-sm text-gray-500">
         Page {page} of {totalPages}
       </div>

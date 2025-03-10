@@ -16,7 +16,7 @@ interface PatientsTableProps {
 
 export default function PatientsTable({ data }: PatientsTableProps) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm max-w-6xl mx-auto">
       <Table className="w-full border-collapse bg-white text-sm">
         <TableHeader>
           <TableRow className="bg-gray-50">
@@ -53,7 +53,7 @@ export default function PatientsTable({ data }: PatientsTableProps) {
 // Table skeleton component for loading state
 export function TableSkeleton() {
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm max-w-6xl mx-auto">
       <Table className="w-full border-collapse bg-white text-sm">
         <TableHeader>
           <TableRow className="bg-gray-50">
