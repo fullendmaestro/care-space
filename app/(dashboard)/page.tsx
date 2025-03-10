@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Patient } from "./tapi/patients/route";
 import PatientsTable, { TableSkeleton } from "@/components/patients-table";
 import Pagination from "@/components/pagination";
 import usePatients from "@/hooks/usePatients";

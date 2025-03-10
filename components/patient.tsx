@@ -1,5 +1,5 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Patient } from "@/app/(dashboard)/tapi/patients/route";
+import { Patient } from "@/app/(dashboard)/api/patients/route";
 
 interface PatientRowProps {
   patient: Patient;

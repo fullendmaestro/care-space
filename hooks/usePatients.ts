@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Patient } from "@/app/(dashboard)/tapi/patients/route";
+import { Patient } from "@/app/(dashboard)/api/patients/route";
 
 async function fetchPosts(page: number): Promise<Patient[]> {
-  const response = await axios.get(`/tapi/patients?page=${page}`);
+  const response = await axios.get(`/api/patients?page=${page}`);
   return response.data;
 }
 

@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import PatientRow from "@/components/patient";
-import { Patient } from "@/app/(dashboard)/tapi/patients/route";
+import { Patient } from "@/app/(dashboard)/api/patients/route";
 import { Skeleton } from "./ui/skeleton";
 
 interface PatientsTableProps {
