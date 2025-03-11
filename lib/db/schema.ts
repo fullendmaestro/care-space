@@ -8,7 +8,3 @@ export const user = pgTable("User", {
 });
 
 export type User = InferSelectModel<typeof user>;
-
-export const patient = pgTable("Patient", {});
-
-export type Patient = InferSelectModel<typeof patient>;
