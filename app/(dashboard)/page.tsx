@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import PatientsTable, { TableSkeleton } from "@/components/patients-table";
-import Pagination from "@/components/pagination";
 import usePatients from "@/hooks/usePatients";
 
 export default function Home() {
@@ -29,8 +28,8 @@ export default function Home() {
   return (
     <div className="min-h-screen p-4 sm:p-8 font-[family-name:var(--font-geist-sans)]">
       <h1 className="text-2xl font-bold mb-6">Patient Records</h1>
-      <PatientsTable data={data} />
-      <Pagination
+      <PatientsTable
+        data={data}
         page={page}
         totalPages={totalPages}
         onFirstPage={handleFirstPage}

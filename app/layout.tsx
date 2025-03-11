@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
 
+import { SessionProvider } from "next-auth/react";
+
 import { ThemeProvider } from "@/components/theme-provider";
 import QueryProvider from "@/components/QueryProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -11,6 +13,10 @@ export const metadata: Metadata = {
   metadataBase: new URL("http://localhost:3000"),
   title: "Medicry",
   description: "Comprehensive hospital record keeping app.",
+  openGraph: {
+    title: "Medicry",
+    description: "Comprehensive hospital record keeping app.",
+  },
 };
 
 export const viewport = {
@@ -59,18 +65,20 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <QueryProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Toaster position="top-center" />
-            {children}
-          </ThemeProvider>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryProvider>
+        <SessionProvider>
+          <QueryProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Toaster position="top-center" />
+              {children}
+            </ThemeProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </QueryProvider>
+        </SessionProvider>
       </body>
     </html>
   );
