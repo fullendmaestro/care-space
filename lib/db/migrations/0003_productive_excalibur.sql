@@ -1,0 +1,1 @@
+ALTER TABLE "Patient" ADD COLUMN "status" varchar(20) DEFAULT 'Active';

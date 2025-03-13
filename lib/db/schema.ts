@@ -44,6 +44,7 @@ export const patient = pgTable("Patient", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
   patientId: varchar("patient_id", { length: 20 }).notNull().unique(),
+  status: varchar("status", { length: 20 }).default("Active"),
   details: json("details"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
