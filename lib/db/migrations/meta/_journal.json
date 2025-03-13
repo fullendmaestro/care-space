@@ -8,6 +8,20 @@
       "when": 1741660070811,
       "tag": "0000_chubby_revanche",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1741663080173,
+      "tag": "0001_redundant_dagger",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1741898605882,
+      "tag": "0002_freezing_trauma",
+      "breakpoints": true
     }
   ]
 }
