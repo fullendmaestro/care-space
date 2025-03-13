@@ -5,7 +5,7 @@ import { and, asc, desc, eq, gt, gte, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-import { user, type User } from "./schema";
+import { Patient, patient, user, type User } from "./schema";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -24,14 +24,33 @@ export async function getUser(email: string): Promise<Array<User>> {
   }
 }
 
-export async function createUser(email: string, password: string) {
+export async function createUser(
+  email: string,
+  password: string,
+  name: string,
+  role: string,
+  image?: string
+) {
   const salt = genSaltSync(10);
   const hash = hashSync(password, salt);
 
   try {
-    return await db.insert(user).values({ email, password: hash });
+    return await db
+      .insert(user)
+      .values({ email, password: hash, name, role, image });
   } catch (error) {
     console.error("Failed to create user in database");
+    throw error;
+  }
+}
+
+export async function createPatient(
+  data: Omit<Patient, "id" | "createdAt" | "updatedAt">
+) {
+  try {
+    return await db.insert(patient).values(data);
+  } catch (error) {
+    console.error("Failed to create patient in database");
     throw error;
   }
 }
