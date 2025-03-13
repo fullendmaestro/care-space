@@ -2,7 +2,12 @@
 
 import { z } from "zod";
 
-import { createPatient, createUser, getUser } from "@/lib/db/queries";
+import {
+  createPatient,
+  createStaff,
+  createUser,
+  getUser,
+} from "@/lib/db/queries";
 
 import { signIn } from "./auth";
 import { generatePatientId } from "@/lib/utils";
@@ -31,6 +36,15 @@ const patientSchema = registerSchema.extend({
   allergies: z.string().optional(),
   emergencyContact: z.string().optional(),
   emergencyPhone: z.string().optional(),
+});
+
+// Staff registration schema
+const staffSchema = registerSchema.extend({
+  specialization: z.string().optional(),
+  contactNumber: z.string().optional(),
+  address: z.string().optional(),
+  dateOfBirth: z.date().optional().nullable(),
+  gender: z.string().optional(),
 });
 
 export interface LoginActionState {
@@ -172,6 +186,87 @@ export async function registerPatient(formData: FormData) {
     //   password,
     //   redirect: false,
     // });
+
+    return { success: true };
+  } catch (error) {
+    return {
+      error: "An error occurred during registration. Please try again.",
+    };
+  }
+}
+
+export async function registerStaff(formData: FormData) {
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const role = formData.get("role") as string;
+  const specialization = formData.get("specialization") as string;
+  const contactNumber = formData.get("contactNumber") as string;
+  const address = formData.get("address") as string;
+  const dateOfBirth = formData.get("dateOfBirth")
+    ? new Date(formData.get("dateOfBirth") as string)
+    : null;
+  const gender = formData.get("gender") as string;
+
+  // Validate form data
+  const validatedFields = staffSchema.safeParse({
+    name,
+    email,
+    password,
+    role,
+    specialization,
+    contactNumber,
+    address,
+    dateOfBirth,
+    gender,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      error: "Invalid form data. Please check your inputs.",
+    };
+  }
+
+  try {
+    // Check if user already exists
+    const existingUser = await getUser(email);
+    if (existingUser.length > 0) {
+      return {
+        error: "User with this email already exists.",
+      };
+    }
+
+    // Create user
+    await createUser(email, password, name, role);
+
+    const createdUser = await getUser(email);
+
+    const staffDetails = {
+      specialization,
+      contactNumber,
+      address,
+      dateOfBirth,
+      gender,
+    };
+
+    console.log("createdss user", createdUser);
+
+    // Create staff record
+    if (createdUser) {
+      await createStaff({
+        userId: createdUser.id,
+        staffRole: role,
+        isActive: true,
+        details: staffDetails,
+      });
+    }
+
+    // Sign in the user
+    // await signIn("credentials", {
+    //   email,
+    //   password,
+    //   redirect: false,
+    // })
 
     return { success: true };
   } catch (error) {

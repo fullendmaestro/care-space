@@ -5,7 +5,7 @@ import { and, asc, desc, eq, gt, gte, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-import { Patient, patient, user, type User } from "./schema";
+import { Patient, patient, staff, Staff, user, type User } from "./schema";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -51,6 +51,17 @@ export async function createPatient(
     return await db.insert(patient).values(data);
   } catch (error) {
     console.error("Failed to create patient in database");
+    throw error;
+  }
+}
+
+export async function createStaff(
+  data: Omit<Staff, "id" | "createdAt" | "updatedAt">
+) {
+  try {
+    return await db.insert(staff).values(data);
+  } catch (error) {
+    console.error("Failed to create staff in database");
     throw error;
   }
 }
