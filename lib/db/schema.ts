@@ -33,6 +33,7 @@ export const staff = pgTable("Staff", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   userId: uuid("user_id").references(() => user.id, { onDelete: "cascade" }),
   isActive: boolean("is_active").default(true),
+  staffRole: varchar("role", { length: 20 }).default("admin"),
   details: json("details"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
