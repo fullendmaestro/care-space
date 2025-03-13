@@ -275,3 +275,50 @@ export async function registerStaff(formData: FormData) {
     };
   }
 }
+
+export async function registerAdmin(formData: FormData) {
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const role = "admin";
+
+  // Validate form data
+  const validatedFields = registerSchema.safeParse({
+    name,
+    email,
+    password,
+    role,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      error: "Invalid form data. Please check your inputs.",
+    };
+  }
+
+  try {
+    // Check if user already exists
+    const existingUser = await getUser(email);
+    if (existingUser.length > 0) {
+      return {
+        error: "User with this email already exists.",
+      };
+    }
+
+    // Create user
+    await createUser(email, password, name, role);
+
+    // Sign in the user
+    // await signIn("credentials", {
+    //   email,
+    //   password,
+    //   redirect: false,
+    // })
+
+    return { success: true };
+  } catch (error) {
+    return {
+      error: "An error occurred during registration. Please try again.",
+    };
+  }
+}
