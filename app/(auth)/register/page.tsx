@@ -1,74 +1,70 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { UserRound, Stethoscope, ShieldCheck } from "lucide-react";
 
-import { AuthForm } from "@/components/auth-form";
-import { SubmitButton } from "@/components/submit-button";
-
-import { register, type RegisterActionState } from "../actions";
-import { toast } from "@/components/toast";
-
-export default function Page() {
+export default function RegisterTypePage() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [isSuccessful, setIsSuccessful] = useState(false);
-
-  const [state, formAction] = useActionState<RegisterActionState, FormData>(
-    register,
+  const registrationTypes = [
     {
-      status: "idle",
-    }
-  );
-
-  useEffect(() => {
-    if (state.status === "user_exists") {
-      toast({ type: "error", description: "Account already exists!" });
-    } else if (state.status === "failed") {
-      toast({ type: "error", description: "Failed to create account!" });
-    } else if (state.status === "invalid_data") {
-      toast({
-        type: "error",
-        description: "Failed validating your submission!",
-      });
-    } else if (state.status === "success") {
-      toast({ type: "success", description: "Account created successfully!" });
-
-      setIsSuccessful(true);
-      router.refresh();
-    }
-  }, [state, router]);
-
-  const handleSubmit = (formData: FormData) => {
-    setEmail(formData.get("email") as string);
-    formAction(formData);
-  };
+      title: "Staff",
+      description: "For doctors, nurses, and other healthcare professionals",
+      icon: <Stethoscope className="h-6 w-6" />,
+      href: "/register/staff",
+    },
+    {
+      title: "Patient",
+      description: "For individuals seeking healthcare services",
+      icon: <UserRound className="h-6 w-6" />,
+      href: "/register/patient",
+    },
+    {
+      title: "Administrator",
+      description: "For hospital management and administrative staff",
+      icon: <ShieldCheck className="h-6 w-6" />,
+      href: "/register/admin",
+    },
+  ];
 
   return (
-    <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl gap-12 flex flex-col">
-        <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
-          <h3 className="text-xl font-semibold dark:text-zinc-50">Sign Up</h3>
-          <p className="text-sm text-gray-500 dark:text-zinc-400">
-            Create an account with your email and password
-          </p>
-        </div>
-        <AuthForm action={handleSubmit} defaultEmail={email}>
-          <SubmitButton isSuccessful={isSuccessful}>Sign Up</SubmitButton>
-          <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
-            {"Already have an account? "}
-            <Link
-              href="/login"
-              className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
-            >
-              Sign in
-            </Link>
-            {" instead."}
-          </p>
-        </AuthForm>
-      </div>
-    </div>
+    <Card className="w-full">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+        <CardDescription>
+          Choose your account type to get started
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {registrationTypes.map((type) => (
+          <Button
+            key={type.title}
+            variant="outline"
+            className="w-full justify-start h-auto p-4 text-left"
+            onClick={() => router.push(type.href)}
+          >
+            <div className="flex items-center space-x-4">
+              <div className="rounded-full bg-primary/10 p-2 text-primary">
+                {type.icon}
+              </div>
+              <div>
+                <h3 className="font-medium">{type.title}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {type.description}
+                </p>
+              </div>
+            </div>
+          </Button>
+        ))}
+      </CardContent>
+    </Card>
   );
 }
