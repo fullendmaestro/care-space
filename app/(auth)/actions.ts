@@ -12,9 +12,11 @@ import {
 import { signIn } from "./auth";
 import { generatePatientId } from "@/lib/utils";
 
-const authFormSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+// Login validation schema
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  role: z.string().optional(),
 });
 
 // Register validation schema
@@ -47,35 +49,46 @@ const staffSchema = registerSchema.extend({
   gender: z.string().optional(),
 });
 
-export interface LoginActionState {
-  status: "idle" | "in_progress" | "success" | "failed" | "invalid_data";
-}
+export async function login(formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const role = formData.get("role") as string;
 
-export const login = async (
-  _: LoginActionState,
-  formData: FormData
-): Promise<LoginActionState> => {
+  // Validate form data
+  const validatedFields = loginSchema.safeParse({
+    email,
+    password,
+    role,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      error: "Invalid credentials. Please check your email and password.",
+    };
+  }
+
   try {
-    const validatedData = authFormSchema.parse({
-      email: formData.get("email"),
-      password: formData.get("password"),
-    });
-
-    await signIn("credentials", {
-      email: validatedData.email,
-      password: validatedData.password,
+    // Attempt to sign in
+    const result = await signIn("credentials", {
+      email,
+      password,
+      role,
       redirect: false,
     });
 
-    return { status: "success" };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return { status: "invalid_data" };
+    if (result?.error) {
+      return {
+        error: "Invalid credentials. Please check your email and password.",
+      };
     }
 
-    return { status: "failed" };
+    return { success: true };
+  } catch (error) {
+    return {
+      error: "An error occurred during login. Please try again.",
+    };
   }
-};
+}
 
 export interface RegisterActionState {
   status:
