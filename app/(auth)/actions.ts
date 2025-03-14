@@ -154,7 +154,7 @@ export async function registerPatient(formData: FormData) {
     }
 
     // Create user
-    const result = await createUser(email, password, name, "patient");
+    await createUser(email, password, name, "patient");
 
     // Generate a unique patient ID
     const patientId = generatePatientId();
@@ -171,9 +171,13 @@ export async function registerPatient(formData: FormData) {
       emergencyPhone,
     };
 
+    const createdUser = await getUser(email);
+
     // Create patient record
-    if (result) {
+    if (createdUser.length > 0) {
+      console.log("created user", createdUser);
       await createPatient({
+        userId: createdUser[0].id, // Access the first element's id
         patientId,
         status: "Active",
         details: patientDetail,
@@ -253,8 +257,9 @@ export async function registerStaff(formData: FormData) {
 
     // Create staff record
     if (createdUser) {
+      console.log("created user", createdUser);
       await createStaff({
-        userId: createdUser.id,
+        userId: createdUser[0].id,
         staffRole: role,
         isActive: true,
         details: staffDetails,
