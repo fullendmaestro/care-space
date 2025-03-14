@@ -7,7 +7,11 @@ import { getUser } from "@/lib/db/queries";
 import { authConfig } from "./auth.config";
 
 interface ExtendedSession extends Session {
-  user: User;
+  user: User & { role: string };
+}
+
+interface ExtendedUser extends User {
+  role: string;
 }
 
 export const {
@@ -26,7 +30,7 @@ export const {
         // biome-ignore lint: Forbidden non-null assertion.
         const passwordsMatch = await compare(password, users[0].password!);
         if (!passwordsMatch) return null;
-        return users[0] as any;
+        return users[0] as ExtendedUser;
       },
     }),
   ],
@@ -34,19 +38,15 @@ export const {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.role = (user as ExtendedUser).role;
       }
 
       return token;
     },
-    async session({
-      session,
-      token,
-    }: {
-      session: ExtendedSession;
-      token: any;
-    }) {
+    async session({ session, token }: { session: any; token: any }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.role = token.role as string;
       }
 
       return session;
