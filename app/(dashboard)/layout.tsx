@@ -32,12 +32,14 @@ import { VercelLogo } from "@/components/icons";
 import { NavItem } from "@/components/nav-item";
 import { SearchInput } from "@/components/search";
 import Providers from "@/components/tooltip-provider";
+import { auth } from "../(auth)/auth";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
   return (
     <Providers>
       <main className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -47,7 +49,7 @@ export default function DashboardLayout({
             <MobileNav />
             <DashboardBreadcrumb />
             <SearchInput />
-            <User />
+            <User user={session?.user} />
           </header>
           <main className="grid flex-1 items-start gap-2 p-4 sm:px-6 sm:py-0 md:gap-4 bg-muted/40">
             {children}

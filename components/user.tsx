@@ -1,7 +1,8 @@
 "use client";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import type { User } from "next-auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,11 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 
-export function User() {
-  const { status, data: session } = useSession();
-  // let session = await auth();
-  let user = session?.user;
-
+export function User({ user }: { user: User | undefined }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -35,7 +32,7 @@ export function User() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>{user?.name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Settings</DropdownMenuItem>
         <DropdownMenuItem>Support</DropdownMenuItem>
