@@ -1,8 +1,8 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Patient } from "@/app/(dashboard)/api/patients/route";
+import { PatientData } from "@/types";
 
 interface PatientRowProps {
-  patient: Patient;
+  patient: PatientData;
 }
 
 export default function PatientRow({ patient }: PatientRowProps) {
@@ -17,12 +17,14 @@ export default function PatientRow({ patient }: PatientRowProps) {
           />
           <div>
             <div className="font-medium">{patient.name}</div>
-            <div className="text-gray-400 text-xs">{patient.id}</div>
+            <div className="text-gray-400 text-xs">{patient.patientId}</div>
           </div>
         </div>
       </TableCell>
       <TableCell className="px-4 py-3">
-        {patient.age} • {patient.gender}
+        {patient.details.age} •{" "}
+        {patient.details.gender.charAt(0).toUpperCase() +
+          patient.details.gender.slice(1)}
       </TableCell>
       <TableCell className="px-4 py-3">
         <span

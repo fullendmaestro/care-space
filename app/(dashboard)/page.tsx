@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
-import PatientsTable, { TableSkeleton } from "@/components/patients-table";
+import PatientsTable, {
+  TableSkeleton,
+} from "@/components/tables/patient/patients-table";
 import usePatients from "@/hooks/usePatients";
 
 export default function Home() {

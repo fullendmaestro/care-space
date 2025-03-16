@@ -1,11 +1,19 @@
 import "server-only";
 
 import { genSaltSync, hashSync } from "bcrypt-ts";
-import { and, asc, desc, eq, gt, gte, inArray } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, gte, inArray, like } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-import { Patient, patient, staff, Staff, user, type User } from "./schema";
+import {
+  Patient,
+  patient,
+  staff,
+  Staff,
+  user,
+  UserRole,
+  type User,
+} from "./schema";
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -28,7 +36,7 @@ export async function createUser(
   email: string,
   password: string,
   name: string,
-  role: string,
+  role: UserRole,
   image?: string
 ) {
   const salt = genSaltSync(10);
@@ -40,6 +48,85 @@ export async function createUser(
       .values({ email, password: hash, name, role, image });
   } catch (error) {
     console.error("Failed to create user in database");
+    throw error;
+  }
+}
+
+// Patient queries
+export async function getPatients(
+  page = 1,
+  limit = 10,
+  search?: string,
+  status?: string
+) {
+  try {
+    const offset = (page - 1) * limit;
+    let query = db
+      .select({
+        id: patient.id,
+        userId: patient.userId,
+        patientId: patient.patientId,
+        status: patient.status,
+        details: patient.details,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        role: user.role,
+      })
+      .from(patient)
+      .leftJoin(user, eq(patient.userId, user.id))
+      .limit(limit)
+      .offset(offset);
+
+    if (search) {
+      // Todo: Search based on or patientId
+      query.where(like(user.name, `%${search}%`));
+    }
+
+    if (status) {
+      query.where(eq(patient.status, status));
+    }
+
+    return await query.orderBy(desc(patient.createdAt));
+  } catch (error) {
+    console.error("Failed to get patients from database");
+    throw error;
+  }
+}
+
+export async function getPatientsCount(search?: string, status?: string) {
+  try {
+    let query = db
+      .select({ count: count() })
+      .from(patient)
+      .leftJoin(user, eq(patient.userId, user.id));
+
+    if (search) {
+      query.where(like(user.name, `%${search}%`));
+    }
+
+    if (status) {
+      query.where(eq(patient.status, status));
+    }
+
+    const result = await query;
+    console.log("query count result", result);
+    return result[0].count;
+  } catch (error) {
+    console.error("Failed to get patients count from database");
+    throw error;
+  }
+}
+
+export async function getPatientById(id: string) {
+  try {
+    return await db
+      .select()
+      .from(patient)
+      .leftJoin(user, eq(patient.userId, user.id))
+      .where(eq(patient.id, id));
+  } catch (error) {
+    console.error("Failed to get patient from database");
     throw error;
   }
 }

@@ -11,6 +11,7 @@ import {
 
 import { signIn } from "./auth";
 import { generatePatientId } from "@/lib/utils";
+import { UserRole } from "@/lib/db/schema";
 
 // Login validation schema
 const loginSchema = z.object({
@@ -192,7 +193,7 @@ export async function registerPatient(formData: FormData) {
       await createPatient({
         userId: createdUser[0].id, // Access the first element's id
         patientId,
-        status: "Active",
+        status: "Discharged",
         details: patientDetail,
       });
     }
@@ -216,7 +217,7 @@ export async function registerStaff(formData: FormData) {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const role = formData.get("role") as string;
+  const role = formData.get("role") as UserRole;
   const specialization = formData.get("specialization") as string;
   const contactNumber = formData.get("contactNumber") as string;
   const address = formData.get("address") as string;
