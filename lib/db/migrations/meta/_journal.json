@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1741660070811,
-      "tag": "0000_chubby_revanche",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1741663080173,
-      "tag": "0001_redundant_dagger",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1741898605882,
-      "tag": "0002_freezing_trauma",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1741900725607,
-      "tag": "0003_productive_excalibur",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1741906357707,
-      "tag": "0004_overconfident_spacker_dave",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1741941715388,
-      "tag": "0005_happy_madame_masque",
+      "when": 1742083704832,
+      "tag": "0000_tough_sauron",
       "breakpoints": true
     }
   ]

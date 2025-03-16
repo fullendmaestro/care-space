@@ -1,1 +1,0 @@
-ALTER TABLE "Staff" ADD COLUMN "role" varchar(20) DEFAULT 'admin';
