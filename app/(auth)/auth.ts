@@ -24,12 +24,14 @@ export const {
   providers: [
     Credentials({
       credentials: {},
-      async authorize({ email, password }: any) {
+      async authorize({ email, password, role }: any) {
         const users = await getUser(email);
+        console.log("authenticating", users);
         if (users.length === 0) return null;
         // biome-ignore lint: Forbidden non-null assertion.
         const passwordsMatch = await compare(password, users[0].password!);
-        if (!passwordsMatch) return null;
+        const roleMatch = role === users[0].role;
+        if (!passwordsMatch || !roleMatch) return null;
         return users[0] as ExtendedUser;
       },
     }),
