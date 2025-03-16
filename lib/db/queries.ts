@@ -268,3 +268,35 @@ export async function getStaffCount(search?: string, role?: string) {
     throw error;
   }
 }
+
+export async function getStaffById(id: string) {
+  try {
+    return await db.select().from(staff).where(eq(staff.id, id));
+  } catch (error) {
+    console.error("Failed to get staff from database", error);
+    throw error;
+  }
+}
+export async function updateStaff(id: string, data: Partial<Staff>) {
+  try {
+    return await db
+      .update(staff)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(staff.id, id));
+  } catch (error) {
+    console.error("Failed to update staff in database", error);
+    throw error;
+  }
+}
+
+export async function deleteStaff(id: string) {
+  try {
+    return await db.delete(staff).where(eq(staff.id, id));
+  } catch (error) {
+    console.error("Failed to delete staff from database", error);
+    throw error;
+  }
+}
