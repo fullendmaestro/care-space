@@ -60,7 +60,11 @@ export function Modal({
             {cancelText}
           </Button>
           {onConfirm && (
-            <Button onClick={onConfirm} disabled={isLoading}>
+            <Button
+              onClick={onConfirm}
+              disabled={isLoading}
+              variant="destructive"
+            >
               {isLoading ? "Loading..." : confirmText}
             </Button>
           )}

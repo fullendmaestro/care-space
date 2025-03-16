@@ -204,3 +204,67 @@ export async function deletePatient(id: string) {
     throw error;
   }
 }
+
+// Staff queries
+export async function getStaff(
+  page = 1,
+  limit = 10,
+  search?: string,
+  role?: string
+) {
+  try {
+    const offset = (page - 1) * limit;
+    let query = db
+      .select({
+        id: staff.id,
+        userId: staff.userId,
+        isActive: staff.isActive,
+        staffRole: staff.staffRole,
+        details: staff.details,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        userRole: user.role,
+      })
+      .from(staff)
+      .leftJoin(user, eq(staff.userId, user.id))
+      .limit(limit)
+      .offset(offset);
+
+    if (search) {
+      query.where(like(user.name, `%${search}%`));
+    }
+
+    if (role && role !== "all") {
+      query.where(eq(staff.staffRole, role));
+    }
+
+    return await query.orderBy(desc(staff.createdAt));
+  } catch (error) {
+    console.error("Failed to get staff from database", error);
+    throw error;
+  }
+}
+
+export async function getStaffCount(search?: string, role?: string) {
+  try {
+    let query = db
+      .select({ count: count() })
+      .from(staff)
+      .leftJoin(user, eq(staff.userId, user.id));
+
+    if (search) {
+      query.where(like(user.name, `%${search}%`));
+    }
+
+    if (role && role !== "all") {
+      query.where(eq(staff.staffRole, role));
+    }
+
+    const result = await query;
+    return result[0].count;
+  } catch (error) {
+    console.error("Failed to get staff count from database", error);
+    throw error;
+  }
+}
