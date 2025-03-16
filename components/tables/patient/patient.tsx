@@ -3,11 +3,12 @@ import { PatientData } from "@/types";
 
 interface PatientRowProps {
   patient: PatientData;
+  onClick: () => void;
 }
 
-export default function PatientRow({ patient }: PatientRowProps) {
+export default function PatientRow({ patient, onClick }: PatientRowProps) {
   return (
-    <TableRow key={patient.id} className="hover:bg-gray-50">
+    <TableRow key={patient.id} className="hover:bg-gray-50" onClick={onClick}>
       <TableCell className="px-4 py-3">
         <div className="flex items-center gap-3">
           <img
@@ -23,7 +24,7 @@ export default function PatientRow({ patient }: PatientRowProps) {
       </TableCell>
       <TableCell className="px-4 py-3">
         {patient.details.age} •{" "}
-        {patient.details.gender.charAt(0).toUpperCase() +
+        {patient?.details?.gender?.charAt(0).toUpperCase() +
           patient.details.gender.slice(1)}
       </TableCell>
       <TableCell className="px-4 py-3">

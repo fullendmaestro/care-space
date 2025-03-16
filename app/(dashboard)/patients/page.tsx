@@ -75,6 +75,7 @@ export default function PatientsPage() {
             searchQuery={search}
             onSearch={setSearch}
             pageSize={pageSize}
+            onRefresh={refetch}
           />
         </TabsContent>
       </Tabs>

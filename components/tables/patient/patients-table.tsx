@@ -24,6 +24,10 @@ import PatientRow from "@/components/tables/patient/patient";
 import { PatientTableSkeleton } from "@/components/tables/patient/patient-table-skeleton";
 import { Edit, Eye, Trash2, UserPlus } from "lucide-react";
 import { PatientData } from "@/types";
+import { Modal } from "@/components/ui/modal";
+import { AddPatientForm } from "@/components/forms/add-patient-form";
+import axios from "axios";
+import { toast } from "sonner";
 
 interface PatientsTableProps {
   data: PatientData[];
@@ -34,6 +38,7 @@ interface PatientsTableProps {
   onSearch: (query: string) => void;
   searchQuery: string;
   pageSize: number;
+  onRefresh?: () => void;
 }
 
 export function PatientsTable({
@@ -45,10 +50,47 @@ export function PatientsTable({
   onSearch,
   searchQuery,
   pageSize,
+  onRefresh,
 }: PatientsTableProps) {
   const router = useRouter();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState<PatientData | null>(
+    null
+  );
   const totalPages = Math.ceil(totalItems / pageSize);
+
+  const handleUpdatePatient = async (formData: any) => {
+    if (!selectedPatient) return;
+
+    try {
+      await axios.put(`/api/patients/${selectedPatient.id}`, formData);
+      toast.success("Patient updated successfully");
+      setIsEditModalOpen(false);
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      toast.error("Failed to update patient");
+      console.error(error);
+    }
+  };
+
+  const handleDeletePatient = async () => {
+    if (!selectedPatient) return;
+
+    try {
+      await axios.delete(`/api/patients/${selectedPatient.id}`);
+      toast.success("Patient deleted successfully");
+      setIsEditModalOpen(false);
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      toast.error("Failed to delete patient");
+      console.error(error);
+    }
+  };
+
+  const handleRowClick = (patient: PatientData) => {
+    setSelectedPatient(patient);
+    setIsEditModalOpen(true);
+  };
 
   return (
     <Card>
@@ -81,7 +123,11 @@ export function PatientsTable({
                 <PatientTableSkeleton rows={5} />
               ) : data.length > 0 ? (
                 data.map((patient) => (
-                  <PatientRow key={patient.id} patient={patient} />
+                  <PatientRow
+                    key={patient.id}
+                    patient={patient}
+                    onClick={() => handleRowClick(patient)}
+                  />
                 ))
               ) : (
                 <TableRow>
@@ -105,6 +151,22 @@ export function PatientsTable({
           />
         </div>
       </CardContent>
+      {/* Edit Patient Modal */}
+      <Modal
+        title="Edit Patient"
+        description="Update patient information or delete patient record."
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onConfirm={handleDeletePatient}
+        confirmText="Delete Patient"
+      >
+        {selectedPatient && (
+          <AddPatientForm
+            onSubmit={handleUpdatePatient}
+            initialData={selectedPatient}
+          />
+        )}
+      </Modal>
     </Card>
   );
 }

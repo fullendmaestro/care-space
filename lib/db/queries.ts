@@ -152,3 +152,55 @@ export async function createStaff(
     throw error;
   }
 }
+
+export async function updatePatient(id: string, data: any) {
+  try {
+    // Extract user data if present
+    const { name, email, image, ...patientData } = data;
+
+    console.log("to be updated patient", data, id);
+
+    // Update patient record
+    await db
+      .update(patient)
+      .set({
+        status: patientData.status,
+        updatedAt: new Date(),
+      })
+      .where(eq(patient.id, id));
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update patient in database", error);
+    throw error;
+  }
+}
+
+export async function deletePatient(id: string) {
+  try {
+    // Get the patient record to find the associated user
+    const patientRecord = await getPatientById(id);
+
+    console.log(patientRecord);
+    if (!patientRecord || patientRecord.length === 0) {
+      throw new Error("Patient not found");
+    }
+
+    const userId = patientRecord[0].Patient.userId;
+
+    console.log("to be deleted userid", userId);
+
+    // Delete the patient record
+    await db.delete(patient).where(eq(patient.id, id));
+
+    // Delete the associated user record as well
+    if (userId) {
+      await db.delete(user).where(eq(user.id, userId));
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete patient from database", error);
+    throw error;
+  }
+}

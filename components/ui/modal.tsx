@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,19 +10,19 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface ModalProps {
-  title: string
-  description?: string
-  isOpen: boolean
-  onClose: () => void
-  onConfirm?: () => void
-  confirmText?: string
-  cancelText?: string
-  children: React.ReactNode
-  isLoading?: boolean
+  title: string;
+  description?: string;
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm?: () => void;
+  confirmText?: string;
+  cancelText?: string;
+  children: React.ReactNode;
+  isLoading?: boolean;
 }
 
 export function Modal({
@@ -36,16 +36,16 @@ export function Modal({
   children,
   isLoading = false,
 }: ModalProps) {
-  const [open, setOpen] = useState(isOpen)
+  const [open, setOpen] = useState(isOpen);
 
   useEffect(() => {
-    setOpen(isOpen)
-  }, [isOpen])
+    setOpen(isOpen);
+  }, [isOpen]);
 
   const handleClose = () => {
-    setOpen(false)
-    onClose()
-  }
+    setOpen(false);
+    onClose();
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -67,6 +67,5 @@ export function Modal({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-
