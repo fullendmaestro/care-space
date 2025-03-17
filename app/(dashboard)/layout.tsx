@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/tooltip";
 import { Analytics } from "@vercel/analytics/react";
 import { User } from "@/components/user";
-import { VercelLogo } from "@/components/icons";
 import { NavItem } from "@/components/nav-item";
 import { SearchInput } from "@/components/search";
 import Providers from "@/components/tooltip-provider";
@@ -77,19 +76,19 @@ function DesktopNav() {
           <Home className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="#" label="Patients">
+        <NavItem href="/patients" label="Patients">
           <UserRound className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="/" label="Appointments">
+        <NavItem href="/appointments" label="Appointments">
           <Calendar className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="/staff" label="Staff">
+        <NavItem href="/staffs" label="Staff">
           <Users2 className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="#" label="Medical Records">
+        <NavItem href="/medical-records" label="Medical Records">
           <FileStack className="h-5 w-5" />
         </NavItem>
       </nav>

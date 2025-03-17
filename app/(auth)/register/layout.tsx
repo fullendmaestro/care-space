@@ -13,6 +13,7 @@ export default function RegisterLayout({
       <AuthIllustration
         title="Join Our Healthcare Platform"
         description="Register as a staff member, patient, or administrator to access our comprehensive healthcare management system"
+        imageSrc="/images/medic ill.png"
       />
 
       {/* Right side registration form */}

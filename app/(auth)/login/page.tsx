@@ -69,6 +69,7 @@ export default function Login() {
       <AuthIllustration
         title="Welcome Back"
         description="Sign in to access your account and manage your healthcare services"
+        imageSrc="/images/medic ill.png"
       />
 
       {/* Right side login form */}
