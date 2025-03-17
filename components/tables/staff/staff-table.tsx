@@ -22,8 +22,10 @@ import { Modal } from "@/components/ui/modal";
 import { AddStaffForm } from "@/components/forms/add-staff-form";
 import { SearchFilter } from "@/components/tables/search-filter";
 import { StaffTableSkeleton } from "@/components/tables/staff/staff-table-skeleton";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { UserPlus } from "lucide-react";
+import { Pagination } from "@/components/tables/pagination";
+import { StaffRow } from "@/components/tables/staff/staff-row";
+import { UpdateStaffModal } from "@/components/tables/staff/staff-update-modal";
+import { StaffDeleteModal } from "@/components/tables/staff/staff-delete-modal";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -63,9 +65,23 @@ export function StaffTable({
   onRefresh,
 }: StaffTableProps) {
   const router = useRouter();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
   const totalPages = Math.ceil(totalItems / pageSize);
+
+  const handleAddStaff = async (formData: any) => {
+    try {
+      await axios.post("/api/staff", formData);
+      toast.success("Staff member added successfully");
+      setIsAddModalOpen(false);
+      if (onRefresh) onRefresh();
+    } catch (error) {
+      toast.error("Failed to add staff member");
+      console.error(error);
+    }
+  };
 
   const handleUpdateStaff = async (formData: any) => {
     if (!selectedStaff) return;
@@ -87,6 +103,7 @@ export function StaffTable({
     try {
       await axios.delete(`/api/staff/${selectedStaff.id}`);
       toast.success("Staff member deleted successfully");
+      setIsDeleteModalOpen(false);
       setIsEditModalOpen(false);
       if (onRefresh) onRefresh();
     } catch (error) {
@@ -134,38 +151,11 @@ export function StaffTable({
                 <StaffTableSkeleton rows={5} />
               ) : data.length > 0 ? (
                 data.map((staff) => (
-                  <TableRow
+                  <StaffRow
                     key={staff.id}
-                    className="cursor-pointer hover:bg-gray-50"
+                    staff={staff}
                     onClick={() => handleRowClick(staff)}
-                  >
-                    <TableCell className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={
-                            staff.image || "/placeholder.svg?height=40&width=40"
-                          }
-                          alt={`${staff.name}'s avatar`}
-                          className="h-10 w-10 rounded-full object-cover"
-                        />
-                        <div className="font-medium">{staff.name}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="px-4 py-3">
-                      <span className="capitalize">{staff.role}</span>
-                    </TableCell>
-                    <TableCell className="px-4 py-3">
-                      {staff.specialization || "N/A"}
-                    </TableCell>
-                    <TableCell className="px-4 py-3">
-                      {staff.contactNumber || staff.email}
-                    </TableCell>
-                    <TableCell className="px-4 py-3">
-                      <StatusBadge
-                        status={staff.isActive ? "Active" : "Inactive"}
-                      />
-                    </TableCell>
-                  </TableRow>
+                  />
                 ))
               ) : (
                 <TableRow>
@@ -179,69 +169,39 @@ export function StaffTable({
         </div>
 
         {totalPages > 1 && (
-          <div className="mt-4 flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              Showing {(currentPage - 1) * pageSize + 1} to{" "}
-              {Math.min(currentPage * pageSize, totalItems)} of {totalItems}{" "}
-              entries
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(1)}
-                disabled={currentPage === 1}
-              >
-                First
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
-              <span className="text-sm mx-2">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(totalPages)}
-                disabled={currentPage === totalPages}
-              >
-                Last
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            pageSize={pageSize}
+            totalItems={totalItems}
+          />
         )}
       </CardContent>
 
-      {/* Edit Staff Modal */}
       <Modal
-        title="Edit Staff Member"
-        description="Update staff information or delete staff record."
+        title="Add New Staff Member"
+        description="Enter the staff details below to add a new staff record."
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      >
+        <AddStaffForm onSubmit={handleAddStaff} />
+      </Modal>
+
+      <UpdateStaffModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onConfirm={handleDeleteStaff}
-        confirmText="Delete Staff Member"
-      >
-        {selectedStaff && (
-          <AddStaffForm
-            onSubmit={handleUpdateStaff}
-            initialData={selectedStaff}
-          />
-        )}
-      </Modal>
+        staff={selectedStaff}
+        onUpdate={handleUpdateStaff}
+        onDelete={() => setIsDeleteModalOpen(true)}
+      />
+
+      <StaffDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        staff={selectedStaff}
+        onDelete={handleDeleteStaff}
+      />
     </Card>
   );
 }
