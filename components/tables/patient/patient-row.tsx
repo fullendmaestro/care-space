@@ -28,10 +28,11 @@ export function PatientRow({ patient, onClick }: PatientRowProps) {
       </TableCell>
       <TableCell className="px-4 py-3">
         {patient.details.age || "N/A"} •{" "}
-        {patient.details.gender
-          ? patient.details.gender.charAt(0).toUpperCase() +
-            patient.details.gender.slice(1)
-          : "N/A"}
+        {patient.details.gender ? (
+          <span className="capitalize">{patient.details.gender}</span>
+        ) : (
+          "N/A"
+        )}
       </TableCell>
       <TableCell className="px-4 py-3">
         <span
