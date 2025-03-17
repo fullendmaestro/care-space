@@ -210,7 +210,7 @@ export async function getStaff(
   page = 1,
   limit = 10,
   search?: string,
-  role?: string
+  role?: any
 ) {
   try {
     const offset = (page - 1) * limit;
@@ -219,12 +219,11 @@ export async function getStaff(
         id: staff.id,
         userId: staff.userId,
         isActive: staff.isActive,
-        staffRole: staff.staffRole,
         details: staff.details,
         name: user.name,
         email: user.email,
         image: user.image,
-        userRole: user.role,
+        role: user.role,
       })
       .from(staff)
       .leftJoin(user, eq(staff.userId, user.id))
@@ -236,7 +235,7 @@ export async function getStaff(
     }
 
     if (role && role !== "all") {
-      query.where(eq(staff.staffRole, role));
+      query.where(eq(user.role, role));
     }
 
     return await query.orderBy(desc(staff.createdAt));
@@ -246,7 +245,7 @@ export async function getStaff(
   }
 }
 
-export async function getStaffCount(search?: string, role?: string) {
+export async function getStaffCount(search?: string, role?: any) {
   try {
     let query = db
       .select({ count: count() })
@@ -258,7 +257,7 @@ export async function getStaffCount(search?: string, role?: string) {
     }
 
     if (role && role !== "all") {
-      query.where(eq(staff.staffRole, role));
+      query.where(eq(user.role, role));
     }
 
     const result = await query;
