@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { PatientsTable } from "@/components/tables/patient/patients-table";
+import { PatientsTable } from "@/components/tables/patient/patient-table";
 import usePatients from "@/hooks/usePatients";
 
 export default function PatientsPage() {

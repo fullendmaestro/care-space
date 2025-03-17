@@ -1,31 +1,37 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { PatientData } from "@/types";
+import type { PatientData } from "@/types";
 
 interface PatientRowProps {
   patient: PatientData;
   onClick: () => void;
 }
 
-export default function PatientRow({ patient, onClick }: PatientRowProps) {
+export function PatientRow({ patient, onClick }: PatientRowProps) {
   return (
-    <TableRow key={patient.id} className="hover:bg-gray-50" onClick={onClick}>
+    <TableRow
+      key={patient.id}
+      className="cursor-pointer hover:bg-gray-50"
+      onClick={onClick}
+    >
       <TableCell className="px-4 py-3">
         <div className="flex items-center gap-3">
           <img
-            src={patient.image}
+            src={patient.image || "/placeholder.svg?height=40&width=40"}
             alt={`${patient.name}'s avatar`}
             className="h-10 w-10 rounded-full object-cover"
           />
           <div>
             <div className="font-medium">{patient.name}</div>
-            <div className="text-gray-400 text-xs">{patient.patientId}</div>
+            <div className="text-gray-400 text-xs">{patient.email}</div>
           </div>
         </div>
       </TableCell>
       <TableCell className="px-4 py-3">
-        {patient.details.age} •{" "}
-        {patient?.details?.gender?.charAt(0).toUpperCase() +
-          patient.details.gender.slice(1)}
+        {patient.details.age || "N/A"} •{" "}
+        {patient.details.gender
+          ? patient.details.gender.charAt(0).toUpperCase() +
+            patient.details.gender.slice(1)
+          : "N/A"}
       </TableCell>
       <TableCell className="px-4 py-3">
         <span
@@ -44,9 +50,13 @@ export default function PatientRow({ patient, onClick }: PatientRowProps) {
           {patient.status}
         </span>
       </TableCell>
-      <TableCell className="px-4 py-3">{patient.department}</TableCell>
-      <TableCell className="px-4 py-3">{patient.doctor}</TableCell>
-      <TableCell className="px-4 py-3">{patient.lastVisit}</TableCell>
+      <TableCell className="px-4 py-3">
+        {patient.details.contactNumber || "N/A"}
+      </TableCell>
+      <TableCell className="px-4 py-3">
+        {patient.details.bloodGroup || "N/A"}
+      </TableCell>
+      <TableCell className="px-4 py-3">{patient.patientId}</TableCell>
     </TableRow>
   );
 }

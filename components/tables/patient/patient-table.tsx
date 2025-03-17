@@ -17,17 +17,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Pagination from "@/components/tables/pagination";
 import { SearchFilter } from "@/components/tables/search-filter";
-import PatientRow from "@/components/tables/patient/patient";
 import { PatientTableSkeleton } from "@/components/tables/patient/patient-table-skeleton";
-import { Edit, Eye, Trash2, UserPlus } from "lucide-react";
-import { PatientData } from "@/types";
-import { Modal } from "@/components/ui/modal";
-import { AddPatientForm } from "@/components/forms/add-patient-form";
+import type { PatientData } from "@/types";
 import axios from "axios";
 import { toast } from "sonner";
+import { Pagination } from "@/components/tables/pagination";
+import { PatientRow } from "@/components/tables/patient/patient-row";
+import { PatientUpdateModal } from "@/components/tables/patient/patient-update-modal";
+import { PatientDeleteModal } from "@/components/tables/patient/patient-delete-modal";
 
 interface PatientsTableProps {
   data: PatientData[];
@@ -54,6 +52,7 @@ export function PatientsTable({
 }: PatientsTableProps) {
   const router = useRouter();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<PatientData | null>(
     null
   );
@@ -79,6 +78,7 @@ export function PatientsTable({
     try {
       await axios.delete(`/api/patients/${selectedPatient.id}`);
       toast.success("Patient deleted successfully");
+      setIsDeleteModalOpen(false);
       setIsEditModalOpen(false);
       if (onRefresh) onRefresh();
     } catch (error) {
@@ -90,6 +90,10 @@ export function PatientsTable({
   const handleRowClick = (patient: PatientData) => {
     setSelectedPatient(patient);
     setIsEditModalOpen(true);
+  };
+
+  const handlePageChange = (page: number) => {
+    onPageChange(page);
   };
 
   return (
@@ -113,9 +117,9 @@ export function PatientsTable({
                 <TableHead>Patient</TableHead>
                 <TableHead>Age/Gender</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Department</TableHead>
-                <TableHead>Doctor</TableHead>
-                <TableHead>Last Visit</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Blood Group</TableHead>
+                <TableHead>Patient ID</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -131,7 +135,7 @@ export function PatientsTable({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center">
                     No patients found
                   </TableCell>
                 </TableRow>
@@ -140,33 +144,66 @@ export function PatientsTable({
           </Table>
         </div>
 
-        <div className="mt-4">
+        {totalPages > 1 && (
           <Pagination
-            page={currentPage}
+            currentPage={currentPage}
             totalPages={totalPages}
-            onFirstPage={() => onPageChange(1)}
-            onPrevPage={() => onPageChange(currentPage - 1)}
-            onNextPage={() => onPageChange(currentPage + 1)}
-            onLastPage={() => onPageChange(totalPages)}
-          />
-        </div>
-      </CardContent>
-      {/* Edit Patient Modal */}
-      <Modal
-        title="Edit Patient"
-        description="Update patient information or delete patient record."
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onConfirm={handleDeletePatient}
-        confirmText="Delete Patient"
-      >
-        {selectedPatient && (
-          <AddPatientForm
-            onSubmit={handleUpdatePatient}
-            initialData={selectedPatient}
+            onPageChange={handlePageChange}
+            pageSize={pageSize}
+            totalItems={totalItems}
           />
         )}
-      </Modal>
+      </CardContent>
+
+      <PatientUpdateModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        patient={selectedPatient}
+        onUpdate={handleUpdatePatient}
+        onDelete={() => setIsDeleteModalOpen(true)}
+        router={router}
+      />
+
+      <PatientDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        patient={selectedPatient}
+        onDelete={handleDeletePatient}
+      />
+    </Card>
+  );
+}
+
+export function TableSkeleton() {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <CardTitle>Patient Records</CardTitle>
+            <CardDescription>Manage your patient records</CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Patient</TableHead>
+                <TableHead>Age/Gender</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Blood Group</TableHead>
+                <TableHead>Patient ID</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <PatientTableSkeleton rows={5} />
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
     </Card>
   );
 }

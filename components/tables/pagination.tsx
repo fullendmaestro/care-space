@@ -1,65 +1,61 @@
-import {
-  ChevronsLeftIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronsRightIcon,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
-  page: number;
+  currentPage: number;
   totalPages: number;
-  onFirstPage: () => void;
-  onPrevPage: () => void;
-  onNextPage: () => void;
-  onLastPage: () => void;
+  onPageChange: (page: number) => void;
+  pageSize: number;
+  totalItems: number;
 }
 
-export default function Pagination({
-  page,
+export function Pagination({
+  currentPage,
   totalPages,
-  onFirstPage,
-  onPrevPage,
-  onNextPage,
-  onLastPage,
+  onPageChange,
+  pageSize,
+  totalItems,
 }: PaginationProps) {
   return (
-    <div className="flex items-center gap-2 mt-4 max-w-6xl mx-auto">
-      <div className="text-sm text-gray-500">
-        Page {page} of {totalPages}
+    <div className="mt-4 flex items-center justify-between">
+      <div className="text-sm text-muted-foreground">
+        Showing {(currentPage - 1) * pageSize + 1} to{" "}
+        {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
       </div>
-      <div className="flex gap-1">
+      <div className="flex items-center space-x-2">
         <Button
-          variant="ghost"
-          onClick={onFirstPage}
-          disabled={page === 1}
-          className="px-2 py-1 bg-gray-200 rounded text-sm"
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(1)}
+          disabled={currentPage === 1}
         >
-          <ChevronsLeftIcon size={16} />
+          First
         </Button>
         <Button
-          variant="ghost"
-          onClick={onPrevPage}
-          disabled={page === 1}
-          className="px-2 py-1 bg-gray-200 rounded text-sm"
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
         >
-          <ChevronLeftIcon size={16} />
+          Previous
+        </Button>
+        <span className="text-sm mx-2">
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
         </Button>
         <Button
-          variant="ghost"
-          onClick={onNextPage}
-          disabled={page === totalPages}
-          className="px-2 py-1 bg-gray-200 rounded text-sm"
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(totalPages)}
+          disabled={currentPage === totalPages}
         >
-          <ChevronRightIcon size={16} />
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={onLastPage}
-          disabled={page === totalPages}
-          className="px-2 py-1 bg-gray-200 rounded text-sm"
-        >
-          <ChevronsRightIcon size={16} />
+          Last
         </Button>
       </div>
     </div>
