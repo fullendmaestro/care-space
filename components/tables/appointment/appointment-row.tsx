@@ -30,7 +30,11 @@ export function AppointmentRow({ appointment, onClick }: AppointmentRowProps) {
   };
 
   return (
-    <TableRow className="cursor-pointer hover:bg-gray-50" onClick={onClick}>
+    <TableRow
+      key={appointment.id}
+      className="cursor-pointer hover:bg-gray-50"
+      onClick={onClick}
+    >
       <TableCell className="px-4 py-3">{appointment.patientName}</TableCell>
       <TableCell className="px-4 py-3">{appointment.doctorName}</TableCell>
       <TableCell className="px-4 py-3">

@@ -23,7 +23,7 @@ import { AddAppointmentForm } from "@/components/forms/add-appointment-form";
 import { SearchFilter } from "@/components/tables/search-filter";
 import { AppointmentsTableSkeleton } from "@/components/tables/appointment/appointment-table-skeleton";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Calendar } from "lucide-react";
+import { Plus } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
@@ -34,10 +34,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Pagination } from "@/components/tables/pagination";
-import { AppointmentRow } from "@/components/tables/appointment/appointment-row";
-import { AppointmentScheduleModal } from "@/components/tables/appointment/appointment-schedule-modal";
-import { AppointmentEditModal } from "@/components/tables/appointment/appointment-edit-modal";
+import { AppointmentRow } from "./appointment-row";
+import { AppointmentScheduleModal } from "./appointment-schedule-modal";
+import { AppointmentEditModal } from "./appointment-edit-modal";
 
 interface Appointment {
   id: string;
@@ -85,11 +84,11 @@ export function AppointmentsTable({
   const handleAddAppointment = async (formData: any) => {
     try {
       await axios.post("/api/appointments", formData);
-      toast.success("Appointment added successfully");
+      toast.success("Appointment scheduled successfully");
       setIsAddModalOpen(false);
       if (onRefresh) onRefresh();
     } catch (error) {
-      toast.error("Failed to add appointment");
+      toast.error("Failed to schedule appointment");
       console.error(error);
     }
   };
@@ -151,7 +150,7 @@ export function AppointmentsTable({
           <div className="flex flex-col md:flex-row gap-2 items-end md:items-center">
             <SearchFilter value={searchQuery} onChange={onSearch} />
             <Button onClick={() => setIsAddModalOpen(true)}>
-              <Calendar className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 h-4 w-4" />
               Schedule Appointment
             </Button>
           </div>
@@ -193,13 +192,50 @@ export function AppointmentsTable({
         </div>
 
         {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-            pageSize={pageSize}
-            totalItems={totalItems}
-          />
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-sm text-muted-foreground">
+              Showing {(currentPage - 1) * pageSize + 1} to{" "}
+              {Math.min(currentPage * pageSize, totalItems)} of {totalItems}{" "}
+              entries
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(1)}
+                disabled={currentPage === 1}
+              >
+                First
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              <span className="text-sm mx-2">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(totalPages)}
+                disabled={currentPage === totalPages}
+              >
+                Last
+              </Button>
+            </div>
+          </div>
         )}
       </CardContent>
 

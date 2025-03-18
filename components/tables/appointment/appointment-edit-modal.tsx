@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useState } from "react";
 
 interface Appointment {
   id: string;
@@ -37,7 +38,7 @@ export function AppointmentEditModal({
   onUpdate,
   onDelete,
 }: AppointmentEditModalProps) {
-  if (!appointment) return null;
+  const [status, setStatus] = useState(appointment?.status || "");
 
   return (
     <Modal
@@ -46,46 +47,49 @@ export function AppointmentEditModal({
       isOpen={isOpen}
       onClose={onClose}
     >
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="status">Appointment Status</Label>
-          <Select
-            value={appointment.status}
-            onValueChange={(value) => onUpdate({ status: value })}
+      {appointment && (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="status">Appointment Status</Label>
+            <Select value={status} onValueChange={(value) => setStatus(value)}>
+              <SelectTrigger id="status">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Scheduled">Scheduled</SelectItem>
+                <SelectItem value="Completed">Completed</SelectItem>
+                <SelectItem value="Cancelled">Cancelled</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Button
+            className="w-full"
+            onClick={() => {
+              onUpdate({ status });
+            }}
           >
-            <SelectTrigger id="status">
-              <SelectValue placeholder="Select status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Scheduled">Scheduled</SelectItem>
-              <SelectItem value="Completed">Completed</SelectItem>
-              <SelectItem value="Cancelled">Cancelled</SelectItem>
-              <SelectItem value="In Progress">In Progress</SelectItem>
-              <SelectItem value="Pending">Pending</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+            Update Status
+          </Button>
 
-        <Button
-          className="w-full"
-          onClick={() => onUpdate({ status: appointment.status })}
-        >
-          Update Status
-        </Button>
-
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or
+              </span>
+            </div>
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">Or</span>
-          </div>
-        </div>
 
-        <Button variant="destructive" className="w-full" onClick={onDelete}>
-          Cancel Appointment
-        </Button>
-      </div>
+          <Button variant="destructive" className="w-full" onClick={onDelete}>
+            Cancel Appointment
+          </Button>
+        </div>
+      )}
     </Modal>
   );
 }
