@@ -1,11 +1,27 @@
 import "server-only";
 
 import { genSaltSync, hashSync } from "bcrypt-ts";
-import { and, asc, count, desc, eq, gt, gte, inArray, like } from "drizzle-orm";
+import {
+  aliasedTable,
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gt,
+  gte,
+  inArray,
+  like,
+  sql,
+} from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 import {
+  appointment,
+  Appointment,
+  MedicalRecord,
+  medicalRecord,
   Patient,
   patient,
   staff,
@@ -296,6 +312,339 @@ export async function deleteStaff(id: string) {
     return await db.delete(staff).where(eq(staff.id, id));
   } catch (error) {
     console.error("Failed to delete staff from database", error);
+    throw error;
+  }
+}
+
+// Appointment queries
+export async function getAppointments(
+  page = 1,
+  limit = 10,
+  search?: string,
+  status?: string,
+  doctorId?: string,
+  patientId?: string
+) {
+  try {
+    const offset = (page - 1) * limit;
+
+    // Join with patient and staff tables to get names
+    const doctorUser = aliasedTable(user, "doctorUser");
+    const query = db
+      .select({
+        id: appointment.id,
+        patientId: appointment.patientId,
+        patientName: user.name,
+        doctorId: appointment.doctorId,
+        doctorName: doctorUser.name,
+        appointmentDate: appointment.appointmentDate,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+        status: appointment.status,
+        reason: appointment.reason,
+        notes: appointment.notes,
+        createdAt: appointment.createdAt,
+        updatedAt: appointment.updatedAt,
+      })
+      .from(appointment)
+      .leftJoin(patient, eq(appointment.patientId, patient.id))
+      .leftJoin(user, eq(patient.userId, user.id))
+      .leftJoin(staff, eq(appointment.doctorId, staff.id))
+      .leftJoin(doctorUser, eq(staff.userId, doctorUser.id))
+      .limit(limit)
+      .offset(offset);
+
+    if (search) {
+      query.where(like(user.name, `%${search}%`));
+    }
+
+    if (status) {
+      query.where(eq(appointment.status, status));
+    }
+
+    if (doctorId) {
+      query.where(eq(appointment.doctorId, doctorId));
+    }
+
+    if (patientId) {
+      query.where(eq(appointment.patientId, patientId));
+    }
+
+    return await query.orderBy(desc(appointment.appointmentDate));
+  } catch (error) {
+    console.error("Failed to get appointments from database");
+    throw error;
+  }
+}
+
+export async function getAppointmentsCount(
+  search?: string,
+  status?: string,
+  doctorId?: string,
+  patientId?: string
+) {
+  try {
+    const doctorUser = aliasedTable(user, "doctorUser");
+    const query = db
+      .select({ count: count() })
+      .from(appointment)
+      .leftJoin(patient, eq(appointment.patientId, patient.id))
+      .leftJoin(user, eq(patient.userId, user.id))
+      .leftJoin(staff, eq(appointment.doctorId, staff.id))
+      .leftJoin(doctorUser, eq(staff.userId, doctorUser.id));
+
+    if (search) {
+      query.where(like(user.name, `%${search}%`));
+    }
+
+    if (status) {
+      query.where(eq(appointment.status, status));
+    }
+
+    if (doctorId) {
+      query.where(eq(appointment.doctorId, doctorId));
+    }
+
+    if (patientId) {
+      query.where(eq(appointment.patientId, patientId));
+    }
+
+    const result = await query;
+    return result[0].count;
+  } catch (error) {
+    console.error("Failed to get appointments count from database");
+    throw error;
+  }
+}
+
+export async function getAppointmentById(id: string) {
+  try {
+    const doctorUser = aliasedTable(user, "doctorUser");
+    return await db
+      .select({
+        id: appointment.id,
+        patientId: appointment.patientId,
+        patientName: user.name,
+        doctorId: appointment.doctorId,
+        doctorName: doctorUser.name,
+        appointmentDate: appointment.appointmentDate,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+        status: appointment.status,
+        reason: appointment.reason,
+        notes: appointment.notes,
+        createdAt: appointment.createdAt,
+        updatedAt: appointment.updatedAt,
+      })
+      .from(appointment)
+      .leftJoin(patient, eq(appointment.patientId, patient.id))
+      .leftJoin(user, eq(patient.userId, user.id))
+      .leftJoin(staff, eq(appointment.doctorId, staff.id))
+      .leftJoin(doctorUser, eq(staff.userId, doctorUser.id))
+      .where(eq(appointment.id, id));
+  } catch (error) {
+    console.error("Failed to get appointment from database");
+    throw error;
+  }
+}
+
+export async function createAppointment(
+  data: Omit<Appointment, "id" | "createdAt" | "updatedAt">
+) {
+  try {
+    return await db.insert(appointment).values(data);
+  } catch (error) {
+    console.error("Failed to create appointment in database");
+    throw error;
+  }
+}
+
+export async function updateAppointment(
+  id: string,
+  data: Partial<Appointment>
+) {
+  try {
+    return await db
+      .update(appointment)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(appointment.id, id));
+  } catch (error) {
+    console.error("Failed to update appointment in database");
+    throw error;
+  }
+}
+
+export async function deleteAppointment(id: string) {
+  try {
+    return await db.delete(appointment).where(eq(appointment.id, id));
+  } catch (error) {
+    console.error("Failed to delete appointment from database");
+    throw error;
+  }
+}
+// Medical Record queries
+export async function getMedicalRecords(
+  page = 1,
+  limit = 10,
+  search?: string,
+  patientId?: string,
+  doctorId?: string
+) {
+  try {
+    const offset = (page - 1) * limit;
+
+    // Join with patient and staff tables to get names
+    const doctorUser = aliasedTable(user, "doctorUser");
+    let query = db
+      .select({
+        id: medicalRecord.id,
+        patientId: medicalRecord.patientId,
+        patientName: user.name,
+        doctorId: medicalRecord.doctorId,
+        doctorName: user.name,
+        diagnosis: medicalRecord.diagnosis,
+        treatment: medicalRecord.treatment,
+        prescription: medicalRecord.prescription,
+        notes: medicalRecord.notes,
+        visitDate: medicalRecord.visitDate,
+        createdAt: medicalRecord.createdAt,
+        updatedAt: medicalRecord.updatedAt,
+      })
+      .from(medicalRecord)
+      .leftJoin(patient, eq(medicalRecord.patientId, patient.id))
+      .leftJoin(user, eq(patient.userId, user.id))
+      .leftJoin(staff, eq(medicalRecord.doctorId, staff.id))
+      .leftJoin(doctorUser, eq(staff.userId, doctorUser.id))
+      .limit(limit)
+      .offset(offset);
+
+    if (search) {
+      query.where(
+        sql`${medicalRecord.diagnosis} LIKE ${`%${search}%`} OR ${
+          user.name
+        } LIKE ${`%${search}%`}`
+      );
+    }
+
+    if (patientId) {
+      query.where(eq(medicalRecord.patientId, patientId));
+    }
+
+    if (doctorId) {
+      query.where(eq(medicalRecord.doctorId, doctorId));
+    }
+
+    return await query.orderBy(desc(medicalRecord.visitDate));
+  } catch (error) {
+    console.error("Failed to get medical records from database");
+    throw error;
+  }
+}
+
+export async function getMedicalRecordsCount(
+  search?: string,
+  patientId?: string,
+  doctorId?: string
+) {
+  try {
+    const query = db
+      .select({ count: count() })
+      .from(medicalRecord)
+      .leftJoin(patient, eq(medicalRecord.patientId, patient.id))
+      .leftJoin(user, eq(patient.userId, user.id));
+
+    if (search) {
+      query.where(
+        sql`${medicalRecord.diagnosis} LIKE ${`%${search}%`} OR ${
+          user.name
+        } LIKE ${`%${search}%`}`
+      );
+    }
+
+    if (patientId) {
+      query.where(eq(medicalRecord.patientId, patientId));
+    }
+
+    if (doctorId) {
+      query.where(eq(medicalRecord.doctorId, doctorId));
+    }
+
+    const result = await query;
+    return result[0].count;
+  } catch (error) {
+    console.error("Failed to get medical records count from database");
+    throw error;
+  }
+}
+
+export async function getMedicalRecordById(id: string) {
+  try {
+    const doctorUser = aliasedTable(user, "doctorUser");
+    return await db
+      .select({
+        id: medicalRecord.id,
+        patientId: medicalRecord.patientId,
+        patientName: user.name,
+        doctorId: medicalRecord.doctorId,
+        doctorName: doctorUser.name,
+        diagnosis: medicalRecord.diagnosis,
+        treatment: medicalRecord.treatment,
+        prescription: medicalRecord.prescription,
+        notes: medicalRecord.notes,
+        visitDate: medicalRecord.visitDate,
+        createdAt: medicalRecord.createdAt,
+        updatedAt: medicalRecord.updatedAt,
+      })
+      .from(medicalRecord)
+      .leftJoin(patient, eq(medicalRecord.patientId, patient.id))
+      .leftJoin(user, eq(patient.userId, user.id))
+      .leftJoin(staff, eq(medicalRecord.doctorId, staff.id))
+      .leftJoin(doctorUser, eq(staff.userId, doctorUser.id))
+      .where(eq(medicalRecord.id, id));
+  } catch (error) {
+    console.error("Failed to get medical record from database");
+    throw error;
+  }
+}
+
+export async function createMedicalRecord(
+  data: Omit<MedicalRecord, "id" | "createdAt" | "updatedAt">
+) {
+  try {
+    console.log("create medical rocord data", data);
+    return await db.insert(medicalRecord).values(data);
+  } catch (error) {
+    console.error("Failed to create medical record in database");
+    throw error;
+  }
+}
+
+export async function updateMedicalRecord(
+  id: string,
+  data: Partial<MedicalRecord>
+) {
+  try {
+    return await db
+      .update(medicalRecord)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(medicalRecord.id, id));
+  } catch (error) {
+    console.error("Failed to update medical record in database");
+    throw error;
+  }
+}
+
+export async function deleteMedicalRecord(id: string) {
+  try {
+    return await db.delete(medicalRecord).where(eq(medicalRecord.id, id));
+  } catch (error) {
+    console.error("Failed to delete medical record from database");
     throw error;
   }
 }
