@@ -18,12 +18,12 @@ import { toast } from "sonner";
 
 interface PatientAppointmentsProps {
   patientId: string;
-  showUpcoming: boolean;
+  showUpcoming?: boolean;
 }
 
 export function PatientAppointments({
   patientId,
-  showUpcoming,
+  showUpcoming = false,
 }: PatientAppointmentsProps) {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);

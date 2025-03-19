@@ -43,3 +43,15 @@ export type PatientDetail = {
   emergencyContact?: string;
   emergencyPhone?: string;
 };
+
+export type Staff = {
+  id: string;
+  name: string;
+  role: string;
+  specialization: string;
+  contactNumber: string;
+  email: string;
+  isActive: boolean;
+  image?: string;
+  details?: any;
+};

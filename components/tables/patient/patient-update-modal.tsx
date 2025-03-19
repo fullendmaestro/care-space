@@ -85,7 +85,7 @@ export function PatientUpdateModal({
               onClick={() => {
                 onClose();
                 router.push(
-                  `/appointments/add?patientId=${patient.id}&patientName=${patient.name}`
+                  `/appointments?patientEmail=${patient.email}&patientName=${patient.name}`
                 );
               }}
             >
@@ -103,7 +103,7 @@ export function PatientUpdateModal({
               onClick={() => {
                 onClose();
                 router.push(
-                  `/medical-records/add?patientId=${patient.id}&patientName=${patient.name}`
+                  `/medical-records?patientEmail=${patient.email}&patientName=${patient.name}`
                 );
               }}
             >

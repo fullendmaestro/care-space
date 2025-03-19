@@ -42,12 +42,7 @@ export function PatientAppointmentScheduleModal({
       isOpen={isOpen}
       onClose={onClose}
     >
-      <AddAppointmentForm
-        onSubmit={handleSubmit}
-        isSubmitting={isSubmitting}
-        hidePatientField={true} // Ensure patient field is hidden
-        fixedStatus="Pending" // Ensure status is fixed to "Pending"
-      />
+      <AddAppointmentForm onSubmit={handleSubmit} />
     </Modal>
   );
 }

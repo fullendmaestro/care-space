@@ -28,18 +28,7 @@ import { UpdateStaffModal } from "@/components/tables/staff/staff-update-modal";
 import { StaffDeleteModal } from "@/components/tables/staff/staff-delete-modal";
 import axios from "axios";
 import { toast } from "sonner";
-
-interface Staff {
-  id: string;
-  name: string;
-  role: string;
-  specialization: string;
-  contactNumber: string;
-  email: string;
-  isActive: boolean;
-  image?: string;
-  details?: any;
-}
+import { Staff } from "@/types";
 
 interface StaffTableProps {
   data: Staff[];

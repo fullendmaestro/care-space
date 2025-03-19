@@ -74,7 +74,7 @@ export function UpdateStaffModal({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            {staff.role === "doctor" && (
+            {/* {staff.role === "doctor" && (
               <Button
                 variant="outline"
                 onClick={() => {
@@ -84,8 +84,18 @@ export function UpdateStaffModal({
               >
                 Manage Schedule
               </Button>
-            )}
+            )} */}
 
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                onClose();
+                router.push(`/staffs/${staff.id}`);
+              }}
+            >
+              View Details
+            </Button>
             <Button
               variant="destructive"
               onClick={onDelete}
@@ -94,17 +104,6 @@ export function UpdateStaffModal({
               Delete Staff
             </Button>
           </div>
-
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => {
-              onClose();
-              router.push(`/staff/${staff.id}`);
-            }}
-          >
-            View Details
-          </Button>
         </div>
       )}
     </Modal>
