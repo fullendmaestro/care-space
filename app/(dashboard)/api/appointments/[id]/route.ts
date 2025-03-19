@@ -1,16 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import {
   getAppointmentById,
   updateAppointment,
   deleteAppointment,
 } from "@/lib/db/queries";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+type RouteParams = {
+  params: {
+    id: string;
+  };
+};
+
+export async function GET(request: NextRequest, context: RouteParams) {
   try {
-    const appointment = await getAppointmentById(params.id);
+    const appointment = await getAppointmentById(context.params.id);
     if (!appointment || appointment.length === 0) {
       return NextResponse.json(
         { error: "Appointment not found" },
@@ -27,13 +30,10 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, context: RouteParams) {
   try {
     const body = await request.json();
-    await updateAppointment(params.id, body);
+    await updateAppointment(context.params.id, body);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error updating appointment:", error);
@@ -44,12 +44,9 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, context: RouteParams) {
   try {
-    await deleteAppointment(params.id);
+    await deleteAppointment(context.params.id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting appointment:", error);
