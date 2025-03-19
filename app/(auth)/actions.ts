@@ -274,7 +274,6 @@ export async function registerStaff(formData: FormData) {
       console.log("created user", createdUser);
       await createStaff({
         userId: createdUser[0].id,
-        staffRole: role,
         isActive: true,
         details: staffDetails,
       });

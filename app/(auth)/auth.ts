@@ -6,12 +6,13 @@ import { getUser } from "@/lib/db/queries";
 
 import { authConfig } from "./auth.config";
 
-interface ExtendedSession extends Session {
-  user: User & { role: string };
-}
-
-interface ExtendedUser extends User {
-  role: string;
+declare module "next-auth" {
+  interface User {
+    role: string;
+  }
+  interface Session {
+    user: User;
+  }
 }
 
 export const {
@@ -31,7 +32,7 @@ export const {
         const passwordsMatch = await compare(password, users[0].password!);
         const roleMatch = role === users[0].role;
         if (!passwordsMatch || !roleMatch) return null;
-        return users[0] as ExtendedUser;
+        return users[0] as User;
       },
     }),
   ],
@@ -39,7 +40,7 @@ export const {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = (user as ExtendedUser).role;
+        token.role = user.role;
       }
 
       return token;
