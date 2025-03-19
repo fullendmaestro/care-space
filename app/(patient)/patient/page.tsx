@@ -67,7 +67,7 @@ export default function PatientDashboard() {
         <AlertCircle className="h-16 w-16 text-muted-foreground mb-4" />
         <h2 className="text-2xl font-bold mb-2">Patient Profile Not Found</h2>
         <p className="text-muted-foreground mb-4">
-          We couldn't find your patient profile.
+          We couldn&apos;t find your patient profile.
         </p>
         <Button onClick={() => router.push("/login")}>Return to Login</Button>
       </div>

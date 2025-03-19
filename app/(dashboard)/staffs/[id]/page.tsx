@@ -189,7 +189,8 @@ export default function StaffDetailPage({
         <AlertCircle className="h-16 w-16 text-muted-foreground mb-4" />
         <h2 className="text-2xl font-bold mb-2">Staff Member Not Found</h2>
         <p className="text-muted-foreground mb-4">
-          The staff member you're looking for doesn't exist or has been removed.
+          The staff member you&apos;re looking for doesn&apos;t exist or has
+          been removed.
         </p>
         <Button onClick={() => router.push("/staff")}>
           <ArrowLeft className="mr-2 h-4 w-4" />

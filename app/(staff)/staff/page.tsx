@@ -70,7 +70,7 @@ export default function StaffDashboard() {
         <AlertCircle className="h-16 w-16 text-muted-foreground mb-4" />
         <h2 className="text-2xl font-bold mb-2">Staff Profile Not Found</h2>
         <p className="text-muted-foreground mb-4">
-          We couldn't find your staff profile.
+          We couldn&apos;t find your staff profile.
         </p>
         <Button onClick={() => router.push("/login")}>Return to Login</Button>
       </div>
@@ -89,7 +89,7 @@ export default function StaffDashboard() {
 
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Today's Appointments</CardTitle>
+            <CardTitle>Today&apos;s Appointments</CardTitle>
             <CardDescription>
               Your scheduled appointments for today
             </CardDescription>
