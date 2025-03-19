@@ -55,7 +55,7 @@ export default function Login() {
       }
 
       toast.success("Login successful");
-      router.push("/dashboard");
+      router.push("/login-back");
       router.refresh();
     } catch (error) {
       toast.error("Something went wrong");
