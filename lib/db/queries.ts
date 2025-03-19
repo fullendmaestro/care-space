@@ -20,6 +20,8 @@ import postgres from "postgres";
 import {
   appointment,
   Appointment,
+  DoctorSchedule,
+  doctorSchedule,
   MedicalRecord,
   medicalRecord,
   Patient,
@@ -137,7 +139,17 @@ export async function getPatientsCount(search?: string, status?: string) {
 export async function getPatientById(id: string) {
   try {
     return await db
-      .select()
+      .select({
+        id: patient.id,
+        userId: patient.userId,
+        patientId: patient.patientId,
+        status: patient.status,
+        details: patient.details,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        role: user.role,
+      })
       .from(patient)
       .leftJoin(user, eq(patient.userId, user.id))
       .where(eq(patient.id, id));
@@ -174,8 +186,6 @@ export async function updatePatient(id: string, data: any) {
     // Extract user data if present
     const { name, email, image, ...patientData } = data;
 
-    console.log("to be updated patient", data, id);
-
     // Update patient record
     await db
       .update(patient)
@@ -197,14 +207,11 @@ export async function deletePatient(id: string) {
     // Get the patient record to find the associated user
     const patientRecord = await getPatientById(id);
 
-    console.log(patientRecord);
     if (!patientRecord || patientRecord.length === 0) {
       throw new Error("Patient not found");
     }
 
-    const userId = patientRecord[0].Patient.userId;
-
-    console.log("to be deleted userid", userId);
+    const userId = patientRecord[0].userId;
 
     // Delete the patient record
     await db.delete(patient).where(eq(patient.id, id));
@@ -286,7 +293,20 @@ export async function getStaffCount(search?: string, role?: any) {
 
 export async function getStaffById(id: string) {
   try {
-    return await db.select().from(staff).where(eq(staff.id, id));
+    return await db
+      .select({
+        id: staff.id,
+        userId: staff.userId,
+        isActive: staff.isActive,
+        details: staff.details,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        role: user.role,
+      })
+      .from(staff)
+      .leftJoin(user, eq(staff.userId, user.id))
+      .where(eq(staff.id, id));
   } catch (error) {
     console.error("Failed to get staff from database", error);
     throw error;
@@ -312,6 +332,58 @@ export async function deleteStaff(id: string) {
     return await db.delete(staff).where(eq(staff.id, id));
   } catch (error) {
     console.error("Failed to delete staff from database", error);
+    throw error;
+  }
+}
+
+// Doctor Schedule queries
+export async function getDoctorSchedules(doctorId: string) {
+  try {
+    return await db
+      .select()
+      .from(doctorSchedule)
+      .where(eq(doctorSchedule.doctorId, doctorId))
+      .orderBy(doctorSchedule.dayOfWeek);
+  } catch (error) {
+    console.error("Failed to get doctor schedules from database");
+    throw error;
+  }
+}
+
+export async function createDoctorSchedule(
+  data: Omit<DoctorSchedule, "id" | "createdAt" | "updatedAt">
+) {
+  try {
+    return await db.insert(doctorSchedule).values(data);
+  } catch (error) {
+    console.error("Failed to create doctor schedule in database");
+    throw error;
+  }
+}
+
+export async function updateDoctorSchedule(
+  id: string,
+  data: Partial<DoctorSchedule>
+) {
+  try {
+    return await db
+      .update(doctorSchedule)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(doctorSchedule.id, id));
+  } catch (error) {
+    console.error("Failed to update doctor schedule in database");
+    throw error;
+  }
+}
+
+export async function deleteDoctorSchedule(id: string) {
+  try {
+    return await db.delete(doctorSchedule).where(eq(doctorSchedule.id, id));
+  } catch (error) {
+    console.error("Failed to delete doctor schedule from database");
     throw error;
   }
 }
