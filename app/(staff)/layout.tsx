@@ -26,14 +26,14 @@ export default async function StaffLayout({
 }) {
   const session = await auth();
 
-  if (!session || !["doctor", "nurse", "admin"].includes(session.user.role)) {
+  if (!session || !["doctor", "nurse", "admin"].includes(session?.user?.role)) {
     return <div>Access denied. Please log in as a staff member.</div>;
   }
 
   return (
     <Providers>
       <main className="flex min-h-screen w-full flex-col bg-muted/40">
-        <StaffSidebar role={session.user.role} />
+        <StaffSidebar role={session?.user?.role} />
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             <div className="flex-1"></div>
