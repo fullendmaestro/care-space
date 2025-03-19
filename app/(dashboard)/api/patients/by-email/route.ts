@@ -8,8 +8,6 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const email = url.searchParams.get("email");
 
-    console.log("provided email", email);
-
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }

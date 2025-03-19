@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
+import { aliasedTable, eq } from "drizzle-orm";
 import {
   getAppointments,
   getAppointmentsCount,
   createAppointment,
+  db,
 } from "@/lib/db/queries";
+import { appointment, patient, staff, user } from "@/lib/db/schema";
 
 export async function GET(request: Request) {
   try {
@@ -48,8 +51,10 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
+    console.log(body);
+
     // Validate required fields
-    if (!body.patientId || !body.doctorId || !body.appointmentDate) {
+    if (!body.patientEmail || !body.doctorEmail || !body.appointmentDate) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -77,7 +82,44 @@ export async function POST(request: Request) {
       );
     }
 
-    await createAppointment(body);
+    // Determine the patientId from email
+    const patientRecord = await db
+      .select({ id: patient.id })
+      .from(patient)
+      .leftJoin(user, eq(patient.userId, user.id))
+      .where(eq(user.email, body.patientEmail))
+      .limit(1);
+
+    if (!patientRecord.length) {
+      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
+    }
+    const patientId = patientRecord[0].id;
+
+    // Determine the doctorId from email
+    const doctorRecord = await db
+      .select({ id: staff.id })
+      .from(staff)
+      .leftJoin(user, eq(staff.userId, user.id))
+      .where(eq(user.email, body.doctorEmail))
+      .limit(1);
+
+    if (!doctorRecord.length) {
+      return NextResponse.json({ error: "Doctor not found" }, { status: 404 });
+    }
+    const doctorId = doctorRecord[0].id;
+
+    const appointment = {
+      patientId,
+      doctorId,
+      appointmentDate: body.appointmentDate,
+      startTime: body.startTime,
+      endTime: body.endTime,
+      status: body.status,
+      reason: body.reason,
+      notes: body.notes,
+    };
+
+    await createAppointment(appointment);
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
     console.error("Error creating appointment:", error);

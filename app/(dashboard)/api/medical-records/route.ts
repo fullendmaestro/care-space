@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
+import { aliasedTable, eq } from "drizzle-orm";
 import {
   getMedicalRecords,
   getMedicalRecordsCount,
   createMedicalRecord,
+  db,
 } from "@/lib/db/queries";
+import { user, patient, staff } from "@/lib/db/schema";
 
 export async function GET(request: Request) {
   try {
@@ -27,8 +30,6 @@ export async function GET(request: Request) {
       doctorId
     );
 
-    console.log("medical record count", totalItems);
-
     return NextResponse.json(medicalRecords, {
       headers: {
         "x-total-count": totalItems.toString(),
@@ -46,8 +47,8 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const {
-      patientId,
-      doctorId,
+      patientEmail,
+      doctorEmail,
       diagnosis,
       treatment,
       prescription,
@@ -64,6 +65,30 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    // Fetch patientId based on patientEmail
+    const dbpatient = await db
+      .select({ id: patient.id })
+      .from(patient)
+      .leftJoin(user, eq(patient.userId, user.id))
+      .where(eq(user.email, patientEmail))
+      .limit(1);
+    if (!dbpatient.length) {
+      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
+    }
+    const patientId = dbpatient[0].id;
+
+    // Fetch doctorId based on doctorEmail
+    const doctor = await db
+      .select({ id: staff.id })
+      .from(staff)
+      .leftJoin(user, eq(staff.userId, user.id))
+      .where(eq(user.email, doctorEmail))
+      .limit(1);
+    if (!doctor.length) {
+      return NextResponse.json({ error: "Doctor not found" }, { status: 404 });
+    }
+    const doctorId = doctor[0].id;
 
     const record = {
       patientId,
