@@ -200,7 +200,6 @@ export function MedicalRecordsTable({
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleAddRecord}
-        patientId={patientId}
       />
 
       <MedicalRecordEditModal

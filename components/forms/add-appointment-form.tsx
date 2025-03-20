@@ -27,6 +27,7 @@ export function AddAppointmentForm({
   initialData = {},
   isLoading = false,
 }: AddAppointmentFormProps) {
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     patientEmail: initialData.patientId || "",
     doctorEmail: initialData.doctorId || "",
@@ -58,12 +59,25 @@ export function AddAppointmentForm({
     onSubmit(formData);
   };
 
+  useEffect(() => {
+    // Check if patientEmail is in the URL
+    const urlPatientEmail = searchParams.get("patientEmail");
+
+    if (urlPatientEmail) {
+      setFormData((prev) => ({
+        ...prev,
+        patientEmail: urlPatientEmail,
+      }));
+    }
+  }, [searchParams]);
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="patientSearch">Patient Email</Label>
         <Input
           placeholder="please enter the patient user email"
+          value={formData.patientEmail}
           onChange={(e) => handleChange("patientEmail", e.target.value)}
           type="email"
           required

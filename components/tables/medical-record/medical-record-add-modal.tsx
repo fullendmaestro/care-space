@@ -5,14 +5,12 @@ interface MedicalRecordAddModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (formData: any) => void;
-  patientId?: string;
 }
 
 export function MedicalRecordAddModal({
   isOpen,
   onClose,
   onSubmit,
-  patientId,
 }: MedicalRecordAddModalProps) {
   return (
     <Modal
@@ -21,7 +19,7 @@ export function MedicalRecordAddModal({
       isOpen={isOpen}
       onClose={onClose}
     >
-      <AddMedicalRecordForm onSubmit={onSubmit} patientId={patientId} />
+      <AddMedicalRecordForm onSubmit={onSubmit} />
     </Modal>
   );
 }

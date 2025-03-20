@@ -24,20 +24,18 @@ interface AddMedicalRecordFormProps {
   onSubmit: (data: any) => void;
   initialData?: any;
   isLoading?: boolean;
-  patientId?: string;
 }
 
 export function AddMedicalRecordForm({
   onSubmit,
   initialData = {},
   isLoading = false,
-  patientId,
 }: AddMedicalRecordFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [formData, setFormData] = useState({
-    patientEmail: patientId || initialData.patientId || "",
+    patientEmail: initialData.patientEmail || "",
     doctorEmail: initialData.doctorId || "",
     diagnosis: initialData.diagnosis || "",
     treatment: initialData.treatment || "",
@@ -49,7 +47,7 @@ export function AddMedicalRecordForm({
   });
 
   useEffect(() => {
-    // Check if patientId and patientName are in the URL
+    // Check if patientEmail is in the URL
     const urlPatientEmail = searchParams.get("patientEmail");
 
     if (urlPatientEmail) {
@@ -58,7 +56,7 @@ export function AddMedicalRecordForm({
         patientEmail: urlPatientEmail,
       }));
     }
-  }, [searchParams, patientId]);
+  }, [searchParams]);
 
   const handleChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
