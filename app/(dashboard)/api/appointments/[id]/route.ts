@@ -1,19 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import {
   getAppointmentById,
   updateAppointment,
   deleteAppointment,
 } from "@/lib/db/queries";
+import { NextApiRequest } from "next";
 
-type RouteParams = {
-  params: {
-    id: string;
-  };
-};
+type Params = Promise<{ id: string }>;
 
-export async function GET(request: NextRequest, context: RouteParams) {
+export async function GET(request: Request, segmentData: { params: Params }) {
   try {
-    const appointment = await getAppointmentById(context.params.id);
+    const params = await segmentData.params;
+    const id = params.id;
+    const appointment = await getAppointmentById(id);
     if (!appointment || appointment.length === 0) {
       return NextResponse.json(
         { error: "Appointment not found" },
@@ -30,10 +29,12 @@ export async function GET(request: NextRequest, context: RouteParams) {
   }
 }
 
-export async function PUT(request: NextRequest, context: RouteParams) {
+export async function PUT(request: Request, segmentData: { params: Params }) {
   try {
+    const params = await segmentData.params;
+    const id = params.id;
     const body = await request.json();
-    await updateAppointment(context.params.id, body);
+    await updateAppointment(id, body);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error updating appointment:", error);
@@ -44,9 +45,14 @@ export async function PUT(request: NextRequest, context: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, context: RouteParams) {
+export async function DELETE(
+  request: Request,
+  segmentData: { params: Params }
+) {
   try {
-    await deleteAppointment(context.params.id);
+    const params = await segmentData.params;
+    const id = params.id;
+    await deleteAppointment(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting appointment:", error);

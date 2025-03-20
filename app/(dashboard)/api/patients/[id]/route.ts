@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { getPatientById, updatePatient, deletePatient } from "@/lib/db/queries";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+type Params = Promise<{ id: string }>;
+
+export async function GET(request: Request, segmentData: { params: Params }) {
   try {
-    const patient = await getPatientById(params.id);
+    const params = await segmentData.params;
+    const id = params.id;
+
+    const patient = await getPatientById(id);
     if (!patient || patient.length === 0) {
       return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
@@ -19,13 +21,13 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, segmentData: { params: Params }) {
   try {
+    const params = await segmentData.params;
+    const id = params.id;
+
     const body = await request.json();
-    await updatePatient(params.id, body);
+    await updatePatient(id, body);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(
@@ -37,10 +39,13 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  segmentData: { params: Params }
 ) {
   try {
-    await deletePatient(params.id);
+    const params = await segmentData.params;
+    const id = params.id;
+
+    await deletePatient(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(

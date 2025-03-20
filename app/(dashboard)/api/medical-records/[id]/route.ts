@@ -5,12 +5,13 @@ import {
   deleteMedicalRecord,
 } from "@/lib/db/queries";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+type Params = Promise<{ id: string }>;
+
+export async function GET(request: Request, segmentData: { params: Params }) {
   try {
-    const medicalRecord = await getMedicalRecordById(params.id);
+    const params = await segmentData.params;
+    const id = params.id;
+    const medicalRecord = await getMedicalRecordById(id);
     if (!medicalRecord || medicalRecord.length === 0) {
       return NextResponse.json(
         { error: "Medical record not found" },
@@ -27,18 +28,17 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, segmentData: { params: Params }) {
   try {
+    const params = await segmentData.params;
+    const id = params.id;
     const body = await request.json();
     const updatedBody = {
       ...body,
       visitDate: new Date(body.visitDate),
     };
 
-    await updateMedicalRecord(params.id, updatedBody);
+    await updateMedicalRecord(id, updatedBody);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error updating medical record:", error);
@@ -51,10 +51,12 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  segmentData: { params: Params }
 ) {
   try {
-    await deleteMedicalRecord(params.id);
+    const params = await segmentData.params;
+    const id = params.id;
+    await deleteMedicalRecord(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting medical record:", error);
