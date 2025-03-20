@@ -36,21 +36,17 @@ export default function StaffPage() {
           <TabsTrigger value="admin">Admins</TabsTrigger>
         </TabsList>
         <TabsContent value={activeRole}>
-          {isLoading ? (
-            <TableSkeleton />
-          ) : (
-            <StaffTable
-              data={data?.data || []}
-              isLoading={isLoading}
-              totalItems={data?.totalItems || 0}
-              currentPage={page}
-              onPageChange={setPage}
-              searchQuery={search}
-              onSearch={setSearch}
-              pageSize={pageSize}
-              onRefresh={refetch}
-            />
-          )}
+          <StaffTable
+            data={data?.data || []}
+            isLoading={isLoading}
+            totalItems={data?.totalItems || 0}
+            currentPage={page}
+            onPageChange={setPage}
+            searchQuery={search}
+            onSearch={setSearch}
+            pageSize={pageSize}
+            onRefresh={refetch}
+          />
         </TabsContent>
       </Tabs>
     </div>

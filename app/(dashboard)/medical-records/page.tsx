@@ -24,21 +24,17 @@ export default function MedicalRecordsPage() {
         <h1 className="text-2xl font-bold">Medical Records</h1>
       </div>
 
-      {isLoading ? (
-        <TableSkeleton patientId={undefined} />
-      ) : (
-        <MedicalRecordsTable
-          data={data?.data || []}
-          isLoading={isLoading}
-          totalItems={data?.totalItems || 0}
-          currentPage={page}
-          onPageChange={setPage}
-          searchQuery={search}
-          onSearch={setSearch}
-          pageSize={pageSize}
-          onRefresh={refetch}
-        />
-      )}
+      <MedicalRecordsTable
+        data={data?.data || []}
+        isLoading={isLoading}
+        totalItems={data?.totalItems || 0}
+        currentPage={page}
+        onPageChange={setPage}
+        searchQuery={search}
+        onSearch={setSearch}
+        pageSize={pageSize}
+        onRefresh={refetch}
+      />
     </div>
   );
 }

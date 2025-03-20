@@ -48,21 +48,17 @@ export default function AppointmentsPage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value={activeStatus}>
-          {isLoading ? (
-            <TableSkeleton />
-          ) : (
-            <AppointmentsTable
-              data={data?.data || []}
-              isLoading={isLoading}
-              totalItems={data?.totalItems || 0}
-              currentPage={page}
-              onPageChange={setPage}
-              searchQuery={search}
-              onSearch={setSearch}
-              pageSize={pageSize}
-              onRefresh={refetch}
-            />
-          )}
+          <AppointmentsTable
+            data={data?.data || []}
+            isLoading={isLoading}
+            totalItems={data?.totalItems || 0}
+            currentPage={page}
+            onPageChange={setPage}
+            searchQuery={search}
+            onSearch={setSearch}
+            pageSize={pageSize}
+            onRefresh={refetch}
+          />
         </TabsContent>
       </Tabs>
     </div>
