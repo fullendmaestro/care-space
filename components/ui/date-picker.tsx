@@ -24,6 +24,11 @@ export function DatePicker({
   disabled,
   className,
 }: DatePickerProps) {
+  // A handler that adapts the Calendar's onSelect to calender component's expected signature
+  const handleSelect = (date: Date | undefined) => {
+    onSelect?.(date ?? null);
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -43,7 +48,7 @@ export function DatePicker({
         <Calendar
           mode="single"
           selected={selected || undefined}
-          onSelect={onSelect}
+          onSelect={handleSelect}
           disabled={disabled}
           initialFocus
         />
