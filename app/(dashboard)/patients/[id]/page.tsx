@@ -41,10 +41,12 @@ import { AddPatientForm } from "@/components/forms/add-patient-form";
 import { PatientMedicalRecords } from "@/components/patient/patient-medical-records";
 import { PatientAppointments } from "@/components/patient/patient-appointments";
 
+type Params = Promise<{ id: string }>;
+
 export default function PatientDetailPage({
   params: paramsPromise,
 }: {
-  params: Promise<{ id: string }>;
+  params: Params;
 }) {
   const params = use(paramsPromise);
   const router = useRouter();

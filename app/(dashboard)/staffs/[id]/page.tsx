@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { use, useState } from "react";
 import type React from "react";
 
 import { useRouter } from "next/navigation";
@@ -83,11 +83,14 @@ interface Appointment {
   patientName?: string;
 }
 
+type Params = Promise<{ id: string }>;
+
 export default function StaffDetailPage({
-  params,
+  params: paramsPromise,
 }: {
-  params: { id: string };
+  params: Params;
 }) {
+  const params = use(paramsPromise);
   const router = useRouter();
   const [isAddScheduleOpen, setIsAddScheduleOpen] = useState(false);
 
