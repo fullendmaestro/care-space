@@ -576,7 +576,7 @@ export async function getMedicalRecords(
         patientId: medicalRecord.patientId,
         patientName: user.name,
         doctorId: medicalRecord.doctorId,
-        doctorName: user.name,
+        doctorName: doctorUser.name,
         diagnosis: medicalRecord.diagnosis,
         treatment: medicalRecord.treatment,
         prescription: medicalRecord.prescription,
