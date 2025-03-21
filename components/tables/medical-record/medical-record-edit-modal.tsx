@@ -41,11 +41,7 @@ export function MedicalRecordEditModal({
       confirmText="Delete Record"
     >
       {record && (
-        <AddMedicalRecordForm
-          onSubmit={onSubmit}
-          initialData={record}
-          patientId={patientId}
-        />
+        <AddMedicalRecordForm onSubmit={onSubmit} initialData={record} />
       )}
     </Modal>
   );

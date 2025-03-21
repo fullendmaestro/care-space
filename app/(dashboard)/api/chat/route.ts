@@ -7,6 +7,7 @@ import {
 import { google } from "@ai-sdk/google";
 import { NextResponse } from "next/server";
 import { aiTools } from "@/lib/ai/ai-queries-tools";
+import { geminiFlashModel } from "@/lib/ai";
 
 export async function POST(req: Request) {
   try {
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
-          model: google("gemini-1.5-flash"),
+          model: geminiFlashModel,
           system: systemPrompt,
           messages,
           tools: aiTools,
