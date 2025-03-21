@@ -1,7 +1,13 @@
 import { string, z } from "zod";
 import { db } from "../db/queries";
 import { eq, like, desc } from "drizzle-orm";
-import { patient, user, staff, doctorSchedule } from "../db/schema";
+import {
+  type UserRole,
+  patient,
+  user,
+  staff,
+  doctorSchedule,
+} from "../db/schema";
 
 export const aiTools = {
   getPatients: {
@@ -32,7 +38,7 @@ export const aiTools = {
       search: z.string().optional(),
       role: z.string().optional(),
     }),
-    execute: async ({ search, role }: { search?: string; role?: string }) => {
+    execute: async ({ search, role }: { search?: string; role?: UserRole }) => {
       let query = db
         .select({
           id: staff.id,
