@@ -16,6 +16,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FileText, Calendar } from "lucide-react";
 import { toast } from "sonner";
+import { DoctorAddRecordModal } from "./staff-add-record-modal";
 
 interface StaffPatientsProps {
   staffId: string;
@@ -100,34 +101,15 @@ export function StaffPatients({ staffId, limit = 5 }: StaffPatientsProps) {
               <StatusBadge status={patient.status} />
             </TableCell>
             <TableCell>
-              {patient.age} • {patient.gender}
+              {patient.age} •{" "}
+              <span className="capitalize">{patient.gender}</span>
             </TableCell>
             <TableCell>
               <div className="flex space-x-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() =>
-                    router.push(
-                      `/staff/medical-records/create?patientId=${patient.id}&patientName=${patient.name}`
-                    )
-                  }
-                >
-                  <FileText className="mr-1 h-4 w-4" />
-                  Add Record
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() =>
-                    router.push(
-                      `/staff/appointments/schedule?patientId=${patient.id}&patientName=${patient.name}`
-                    )
-                  }
-                >
-                  <Calendar className="mr-1 h-4 w-4" />
-                  Schedule
-                </Button>
+                <DoctorAddRecordModal
+                  patientId={patient.id}
+                  doctorId={staffId}
+                />
               </div>
             </TableCell>
           </TableRow>

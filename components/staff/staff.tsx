@@ -17,6 +17,7 @@ import { StaffInfoCard } from "@/components/staff/staff-info-card";
 import { StaffAppointments } from "@/components/staff/staff-appointments";
 import { StaffPatients } from "@/components/staff/staff-patients";
 import { StaffSchedule } from "@/components/staff/staff-schedule";
+import { DoctorAddRecordModal } from "./staff-add-record-modal";
 
 export function StaffDashboard({
   session,

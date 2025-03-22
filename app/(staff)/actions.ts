@@ -4,6 +4,7 @@ import { updateDoctorSchedule, deleteDoctorSchedule } from "@/lib/db/queries";
 import { db } from "@/lib/db/queries";
 import { staff, user, appointment, patient } from "@/lib/db/schema";
 import { desc, eq, and, sql } from "drizzle-orm";
+import { medicalRecord } from "@/lib/db/schema";
 
 export async function toggleScheduleAvailability(
   scheduleId: string,
@@ -142,5 +143,36 @@ export async function getPatientsByStaff(staffId: string, limit?: number) {
   } catch (error) {
     console.error("Error fetching patients by staff:", error);
     throw new Error("Failed to fetch patients by staff");
+  }
+}
+
+export async function createRecord({
+  patientId,
+  doctorId,
+  diagnosis,
+  treatment,
+  prescription,
+  notes,
+}: {
+  patientId: string;
+  doctorId: string;
+  diagnosis: string;
+  treatment: string;
+  prescription: string;
+  notes: string;
+}) {
+  try {
+    await db.insert(medicalRecord).values({
+      patientId,
+      doctorId,
+      diagnosis,
+      treatment,
+      prescription,
+      notes,
+    });
+    console.log("Medical record created successfully");
+  } catch (error) {
+    console.error("Error creating medical record:", error);
+    throw new Error("Failed to create medical record");
   }
 }

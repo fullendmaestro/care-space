@@ -19,6 +19,7 @@ import {
   getDoctorAppointments,
   getDoctorTodaysAppointments,
 } from "@/app/(staff)/actions";
+import { DoctorAddRecordModal } from "./staff-add-record-modal";
 
 interface StaffAppointmentsProps {
   staffId: string;
@@ -163,9 +164,10 @@ export function StaffAppointments({
                       </Button>
                     </>
                   )}
-                  <Button size="sm" variant="outline" onClick={() => {}}>
-                    Add Record
-                  </Button>
+                  <DoctorAddRecordModal
+                    patientId={appointment.patientId}
+                    doctorId={staffId}
+                  />
                 </div>
               </TableCell>
             </TableRow>
