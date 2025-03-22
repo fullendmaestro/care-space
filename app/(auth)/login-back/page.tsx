@@ -6,8 +6,11 @@ export default async function Home() {
   console.log("sessionn", session);
   if (session?.user.role === "patient") {
     redirect("/patient");
-  } else if (session?.user.role === "doctor" || "nurse") {
+  } else if (session?.user.role === "doctor" || "nurse" || "receptionist") {
     redirect("/staff");
+  } else if (session?.user.role === "admin") {
+    redirect("/admin");
   }
-  return <></>;
+  return redirect("/login");
 }
+//
