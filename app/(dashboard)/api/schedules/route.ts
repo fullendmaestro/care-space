@@ -28,9 +28,9 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    await createDoctorSchedule(body);
+    const result = await createDoctorSchedule(body);
 
-    return NextResponse.json({ success: true }, { status: 201 });
+    return NextResponse.json(result[0], { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to create schedule" },

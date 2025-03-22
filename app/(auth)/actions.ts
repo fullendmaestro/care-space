@@ -136,22 +136,6 @@ export async function registerPatient(formData: FormData) {
     emergencyPhone,
   });
 
-  console.log("patient", {
-    name,
-    email,
-    password,
-    role: "patient",
-    age,
-    gender,
-    contactNumber,
-    address,
-    dateOfBirth,
-    bloodGroup,
-    allergies,
-    emergencyContact,
-    emergencyPhone,
-  });
-
   if (!validatedFields.success) {
     return {
       error: "Invalid form data. Please check your inputs.",
@@ -189,7 +173,6 @@ export async function registerPatient(formData: FormData) {
 
     // Create patient record
     if (createdUser.length > 0) {
-      console.log("created user", createdUser);
       await createPatient({
         userId: createdUser[0].id, // Access the first element's id
         patientId,
@@ -273,11 +256,8 @@ export async function registerStaff(formData: FormData) {
       gender,
     };
 
-    console.log("createdss user", createdUser);
-
     // Create staff record
     if (createdUser) {
-      console.log("created user", createdUser);
       await createStaff({
         userId: createdUser[0].id,
         isActive: true,

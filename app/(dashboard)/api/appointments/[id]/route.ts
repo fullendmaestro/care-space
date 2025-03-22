@@ -35,6 +35,12 @@ export async function PUT(request: Request, segmentData: { params: Params }) {
     const id = params.id;
     const body = await request.json();
     await updateAppointment(id, body);
+    if (global.broadcastUpdate) {
+      global.broadcastUpdate("appointments", {
+        action: "update",
+        data: "appoinments updated",
+      });
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error updating appointment:", error);
@@ -53,6 +59,12 @@ export async function DELETE(
     const params = await segmentData.params;
     const id = params.id;
     await deleteAppointment(id);
+    if (global.broadcastUpdate) {
+      global.broadcastUpdate("appointments", {
+        action: "delete",
+        data: "appoinment deleted",
+      });
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting appointment:", error);
