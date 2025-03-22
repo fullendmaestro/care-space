@@ -26,7 +26,7 @@ import { Pagination } from "@/components/tables/pagination";
 import { PatientRow } from "@/components/tables/patient/patient-row";
 import { PatientUpdateModal } from "@/components/tables/patient/patient-update-modal";
 import { PatientDeleteModal } from "@/components/tables/patient/patient-delete-modal";
-import useWebSocket from "react-use-websocket";
+import { useSocket } from "@/hooks/useSocket";
 
 interface PatientsTableProps {
   data: PatientData[];
@@ -51,29 +51,14 @@ export function PatientsTable({
   pageSize,
   onRefresh,
 }: PatientsTableProps) {
-  const { sendJsonMessage } = useWebSocket("ws://localhost:3000/ws", {
-    onOpen: () => {
-      console.log("WebSocket connected");
-      sendJsonMessage({ type: "subscribe", channel: "patients" });
-    },
-    onMessage: (event) => {
-      const message = JSON.parse(event.data);
-      if (message.channel === "patients") {
-        console.log("Received update for patients:", message.data);
-        if (onRefresh) onRefresh();
-      }
-    },
-    onClose: () => {
-      console.log("WebSocket disconnected");
+  useSocket({
+    url: "ws://localhost:3000/ws",
+    channel: "patients",
+    onMessage: () => {
+      if (onRefresh) onRefresh();
     },
     shouldReconnect: () => true,
   });
-
-  useEffect(() => {
-    return () => {
-      sendJsonMessage({ type: "unsubscribe", channel: "patients" });
-    };
-  }, [sendJsonMessage]);
 
   const router = useRouter();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);

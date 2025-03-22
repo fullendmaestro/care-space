@@ -37,7 +37,7 @@ import {
 import { AppointmentRow } from "./appointment-row";
 import { AppointmentScheduleModal } from "./appointment-schedule-modal";
 import { AppointmentEditModal } from "./appointment-edit-modal";
-import useWebSocket from "react-use-websocket";
+import { useSocket } from "@/hooks/useSocket";
 
 interface Appointment {
   id: string;
@@ -82,29 +82,14 @@ export function AppointmentsTable({
     useState<Appointment | null>(null);
   const totalPages = Math.ceil(totalItems / pageSize);
 
-  const { sendJsonMessage } = useWebSocket("ws://localhost:3000/ws", {
-    onOpen: () => {
-      console.log("WebSocket connected");
-      sendJsonMessage({ type: "subscribe", channel: "appointments" });
-    },
-    onMessage: (event) => {
-      const message = JSON.parse(event.data);
-      if (message.channel === "appointments") {
-        console.log("Received update for appointments:", message.data);
-        if (onRefresh) onRefresh();
-      }
-    },
-    onClose: () => {
-      console.log("WebSocket disconnected");
+  useSocket({
+    url: "ws://localhost:3000/ws",
+    channel: "appointments",
+    onMessage: () => {
+      if (onRefresh) onRefresh();
     },
     shouldReconnect: () => true,
   });
-
-  useEffect(() => {
-    return () => {
-      sendJsonMessage({ type: "unsubscribe", channel: "appointments" });
-    };
-  }, [sendJsonMessage]);
 
   const handleAddAppointment = async (formData: any) => {
     try {

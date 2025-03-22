@@ -29,7 +29,7 @@ import { StaffDeleteModal } from "@/components/tables/staff/staff-delete-modal";
 import axios from "axios";
 import { toast } from "sonner";
 import { Staff } from "@/types";
-import useWebSocket from "react-use-websocket";
+import { useSocket } from "@/hooks/useSocket";
 
 interface StaffTableProps {
   data: Staff[];
@@ -61,29 +61,14 @@ export function StaffTable({
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
   const totalPages = Math.ceil(totalItems / pageSize);
 
-  const { sendJsonMessage } = useWebSocket("ws://localhost:3000/ws", {
-    onOpen: () => {
-      console.log("WebSocket connected");
-      sendJsonMessage({ type: "subscribe", channel: "staff" });
-    },
-    onMessage: (event) => {
-      const message = JSON.parse(event.data);
-      if (message.channel === "staff") {
-        console.log("Received update for staff:", message.data);
-        if (onRefresh) onRefresh();
-      }
-    },
-    onClose: () => {
-      console.log("WebSocket disconnected");
+  useSocket({
+    url: "ws://localhost:3000/ws",
+    channel: "staff",
+    onMessage: () => {
+      if (onRefresh) onRefresh();
     },
     shouldReconnect: () => true,
   });
-
-  useEffect(() => {
-    return () => {
-      sendJsonMessage({ type: "unsubscribe", channel: "staff" });
-    };
-  }, [sendJsonMessage]);
 
   const handleAddStaff = async (formData: any) => {
     try {

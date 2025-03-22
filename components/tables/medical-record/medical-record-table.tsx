@@ -27,7 +27,7 @@ import { Pagination } from "@/components/tables/pagination";
 import { MedicalRecordRow } from "@/components/tables/medical-record/medical-record-row";
 import { MedicalRecordAddModal } from "@/components/tables/medical-record/medical-record-add-modal";
 import { MedicalRecordEditModal } from "@/components/tables/medical-record/medical-record-edit-modal";
-import useWebSocket from "react-use-websocket";
+import { useSocket } from "@/hooks/useSocket";
 
 interface MedicalRecord {
   id: string;
@@ -75,29 +75,14 @@ export function MedicalRecordsTable({
   );
   const totalPages = Math.ceil(totalItems / pageSize);
 
-  const { sendJsonMessage } = useWebSocket("ws://localhost:3000/ws", {
-    onOpen: () => {
-      console.log("WebSocket connected");
-      sendJsonMessage({ type: "subscribe", channel: "medical_records" });
-    },
-    onMessage: (event) => {
-      const message = JSON.parse(event.data);
-      if (message.channel === "medical_records") {
-        console.log("Received update for medical records:", message);
-        if (onRefresh) onRefresh();
-      }
-    },
-    onClose: () => {
-      console.log("WebSocket disconnected");
+  useSocket({
+    url: "ws://localhost:3000/ws",
+    channel: "medical_records",
+    onMessage: () => {
+      if (onRefresh) onRefresh();
     },
     shouldReconnect: () => true,
   });
-
-  useEffect(() => {
-    return () => {
-      sendJsonMessage({ type: "unsubscribe", channel: "medical_records" });
-    };
-  }, [sendJsonMessage]);
 
   const handleAddRecord = async (formData: any) => {
     try {
