@@ -82,7 +82,7 @@ export function MedicalRecordsTable({
     },
     onMessage: (event) => {
       const message = JSON.parse(event.data);
-      if (message.type === "update" && message.channel === "medical_records") {
+      if (message.channel === "medical_records") {
         console.log("Received update for medical records:", message.data);
         if (onRefresh) onRefresh();
       }
