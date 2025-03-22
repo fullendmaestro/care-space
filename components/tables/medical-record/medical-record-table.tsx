@@ -28,6 +28,7 @@ import { MedicalRecordRow } from "@/components/tables/medical-record/medical-rec
 import { MedicalRecordAddModal } from "@/components/tables/medical-record/medical-record-add-modal";
 import { MedicalRecordEditModal } from "@/components/tables/medical-record/medical-record-edit-modal";
 import { useSocket } from "@/hooks/useSocket";
+import { socketPath } from "@/const";
 
 interface MedicalRecord {
   id: string;
@@ -76,7 +77,7 @@ export function MedicalRecordsTable({
   const totalPages = Math.ceil(totalItems / pageSize);
 
   useSocket({
-    url: "ws://localhost:3000/ws",
+    url: socketPath,
     channel: "medical_records",
     onMessage: () => {
       if (onRefresh) onRefresh();

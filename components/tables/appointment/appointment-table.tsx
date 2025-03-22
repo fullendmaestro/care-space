@@ -38,6 +38,7 @@ import { AppointmentRow } from "./appointment-row";
 import { AppointmentScheduleModal } from "./appointment-schedule-modal";
 import { AppointmentEditModal } from "./appointment-edit-modal";
 import { useSocket } from "@/hooks/useSocket";
+import { socketPath } from "@/const";
 
 interface Appointment {
   id: string;
@@ -83,7 +84,7 @@ export function AppointmentsTable({
   const totalPages = Math.ceil(totalItems / pageSize);
 
   useSocket({
-    url: "ws://localhost:3000/ws",
+    url: socketPath,
     channel: "appointments",
     onMessage: () => {
       if (onRefresh) onRefresh();

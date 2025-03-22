@@ -27,6 +27,7 @@ import { PatientRow } from "@/components/tables/patient/patient-row";
 import { PatientUpdateModal } from "@/components/tables/patient/patient-update-modal";
 import { PatientDeleteModal } from "@/components/tables/patient/patient-delete-modal";
 import { useSocket } from "@/hooks/useSocket";
+import { socketPath } from "@/const";
 
 interface PatientsTableProps {
   data: PatientData[];
@@ -52,7 +53,7 @@ export function PatientsTable({
   onRefresh,
 }: PatientsTableProps) {
   useSocket({
-    url: "ws://localhost:3000/ws",
+    url: socketPath,
     channel: "patients",
     onMessage: () => {
       if (onRefresh) onRefresh();

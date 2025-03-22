@@ -30,6 +30,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { Staff } from "@/types";
 import { useSocket } from "@/hooks/useSocket";
+import { socketPath } from "@/const";
 
 interface StaffTableProps {
   data: Staff[];
@@ -62,7 +63,7 @@ export function StaffTable({
   const totalPages = Math.ceil(totalItems / pageSize);
 
   useSocket({
-    url: "ws://localhost:3000/ws",
+    url: socketPath,
     channel: "staff",
     onMessage: () => {
       if (onRefresh) onRefresh();
