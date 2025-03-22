@@ -1,4 +1,18 @@
-export const socketPath = "ws://localhost:3000/ws";
+// Function to dynamically determine WebSocket URL based on current environment
+export const getSocketPath = () => {
+  // In browser environment
+  if (typeof window !== "undefined") {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const host = window.location.host; // Includes hostname and port if present
+    console.log("sock path calc", `${protocol}//${host}/ws`);
+    return `${protocol}//${host}/ws`;
+  }
+  // Fallback for server-side rendering
+  return "ws://localhost:3000/ws";
+};
+
+// For backward compatibility
+export const socketPath = getSocketPath();
 
 // Define consistent colors for each status
 export const PATIENT_STATUS_COLORS: any = {
