@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getPatientsByStaff } from "@/app/(staff)/actions"; // Import the new action
 import {
   Table,
   TableBody,
@@ -14,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FileText, Calendar } from "lucide-react";
-import axios from "axios";
 import { toast } from "sonner";
 
 interface StaffPatientsProps {
@@ -30,11 +30,8 @@ export function StaffPatients({ staffId, limit = 5 }: StaffPatientsProps) {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        // Get patients who have appointments with this staff member
-        const response = await axios.get(
-          `/api/patients/by-doctor?doctorId=${staffId}&limit=${limit}`
-        );
-        setPatients(response.data);
+        const data = await getPatientsByStaff(staffId, limit); // Use the new action
+        setPatients(data);
       } catch (error) {
         console.error("Error fetching patients:", error);
         toast.error("Failed to load patients");

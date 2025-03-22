@@ -42,7 +42,7 @@ export function StaffInfoCard({ staff }: StaffInfoCardProps) {
               <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">Specialization:</span>
               <span className="ml-auto font-medium">
-                {staff.specialization}
+                {staff.details.specialization}
               </span>
             </div>
           )}
@@ -50,14 +50,16 @@ export function StaffInfoCard({ staff }: StaffInfoCardProps) {
             <div className="flex items-center text-sm">
               <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">Gender:</span>
-              <span className="ml-auto font-medium">{staff.gender}</span>
+              <span className="ml-auto font-medium">
+                {staff.details.gender}
+              </span>
             </div>
           )}
           <div className="flex items-center text-sm">
             <Phone className="mr-2 h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">Phone:</span>
             <span className="ml-auto font-medium">
-              {staff.contactNumber || "Not specified"}
+              {staff.details.contactNumber || "Not specified"}
             </span>
           </div>
           <div className="flex items-center text-sm">
@@ -69,7 +71,9 @@ export function StaffInfoCard({ staff }: StaffInfoCardProps) {
             <div className="flex items-center text-sm">
               <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">Address:</span>
-              <span className="ml-auto font-medium">{staff.address}</span>
+              <span className="ml-auto font-medium">
+                {staff.details.address}
+              </span>
             </div>
           )}
           {staff.dateOfBirth && (
@@ -77,7 +81,7 @@ export function StaffInfoCard({ staff }: StaffInfoCardProps) {
               <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">Date of Birth:</span>
               <span className="ml-auto font-medium">
-                {formatDate(staff.dateOfBirth)}
+                {formatDate(staff.details.dateOfBirth)}
               </span>
             </div>
           )}

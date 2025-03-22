@@ -17,6 +17,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Trash2 } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
+import {
+  toggleScheduleAvailability,
+  deleteSchedule,
+} from "@/app/(staff)/actions";
 
 interface StaffScheduleProps {
   doctorId: string;
@@ -33,19 +37,18 @@ export function StaffSchedule({ doctorId }: StaffScheduleProps) {
     isAvailable: true,
   });
 
+  const fetchSchedules = async () => {
+    try {
+      const response = await axios.get(`/api/schedules?doctorId=${doctorId}`);
+      setSchedules(response.data);
+    } catch (error) {
+      console.error("Error fetching schedules:", error);
+      toast.error("Failed to load schedules");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchSchedules = async () => {
-      try {
-        const response = await axios.get(`/api/schedules?doctorId=${doctorId}`);
-        setSchedules(response.data);
-      } catch (error) {
-        console.error("Error fetching schedules:", error);
-        toast.error("Failed to load schedules");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     if (doctorId) {
       fetchSchedules();
     }
@@ -81,7 +84,7 @@ export function StaffSchedule({ doctorId }: StaffScheduleProps) {
 
   const handleDeleteSchedule = async (scheduleId: string) => {
     try {
-      await axios.delete(`/api/schedules/${scheduleId}`);
+      await deleteSchedule(scheduleId);
       setSchedules(schedules.filter((schedule) => schedule.id !== scheduleId));
       toast.success("Schedule deleted successfully");
     } catch (error) {
@@ -95,7 +98,7 @@ export function StaffSchedule({ doctorId }: StaffScheduleProps) {
     isAvailable: boolean
   ) => {
     try {
-      await axios.put(`/api/schedules/${scheduleId}`, { isAvailable });
+      await toggleScheduleAvailability(scheduleId, isAvailable);
 
       // Update the local state
       setSchedules(

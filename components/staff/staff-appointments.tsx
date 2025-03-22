@@ -15,6 +15,10 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import { toast } from "sonner";
+import {
+  getDoctorAppointments,
+  getDoctorTodaysAppointments,
+} from "@/app/(staff)/actions";
 
 interface StaffAppointmentsProps {
   staffId: string;
@@ -25,26 +29,21 @@ interface StaffAppointmentsProps {
 
 export function StaffAppointments({
   staffId,
-  limit = 5,
   today = false,
-  showViewAll = false,
 }: StaffAppointmentsProps) {
-  const router = useRouter();
   const [appointments, setAppointments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        let url = `/api/appointments?doctorId=${staffId}&limit=${limit}`;
-
         if (today) {
-          const todayDate = new Date().toISOString().split("T")[0];
-          url += `&date=${todayDate}`;
+          const todaysAppointments = await getDoctorTodaysAppointments(staffId);
+          setAppointments(todaysAppointments);
+        } else if (!today) {
+          const allAppointments = await getDoctorAppointments(staffId);
+          setAppointments(allAppointments);
         }
-
-        const response = await axios.get(url);
-        setAppointments(response.data);
       } catch (error) {
         console.error("Error fetching appointments:", error);
         toast.error("Failed to load appointments");
@@ -56,7 +55,7 @@ export function StaffAppointments({
     if (staffId) {
       fetchAppointments();
     }
-  }, [staffId, limit, today]);
+  }, [staffId, today]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
@@ -164,15 +163,7 @@ export function StaffAppointments({
                       </Button>
                     </>
                   )}
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() =>
-                      router.push(
-                        `/staff/medical-records/create?patientId=${appointment.patientId}&patientName=${appointment.patientName}`
-                      )
-                    }
-                  >
+                  <Button size="sm" variant="outline" onClick={() => {}}>
                     Add Record
                   </Button>
                 </div>
@@ -181,17 +172,6 @@ export function StaffAppointments({
           ))}
         </TableBody>
       </Table>
-
-      {showViewAll && appointments.length > 0 && (
-        <div className="mt-4 flex justify-end">
-          <Button
-            variant="outline"
-            onClick={() => router.push("/staff/appointments")}
-          >
-            View All Appointments
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

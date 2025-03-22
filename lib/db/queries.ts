@@ -354,7 +354,8 @@ export async function createDoctorSchedule(
   data: Omit<DoctorSchedule, "id" | "createdAt" | "updatedAt">
 ) {
   try {
-    return await db.insert(doctorSchedule).values(data);
+    const result = await db.insert(doctorSchedule).values(data).returning();
+    return result;
   } catch (error) {
     console.error("Failed to create doctor schedule in database");
     throw error;
