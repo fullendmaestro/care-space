@@ -135,7 +135,7 @@ export function MedicalRecordsTable({
   };
 
   return (
-    <Card>
+    <Card className="max-w-[1260px] mx-auto">
       <CardHeader className="pb-2">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
