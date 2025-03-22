@@ -151,7 +151,7 @@ export function AppointmentOverview() {
 
 function AppointmentOverviewSkeleton() {
   return (
-    <Card className="col-span-4 shadow-sm overflow-hidden">
+    <Card className="col-span-4 max-w-[1260px] mx-auto shadow-sm overflow-hidden">
       <CardHeader className="py-2 px-4 border-b bg-gray-50 dark:bg-gray-800">
         <CardTitle className="text-lg font-semibold">
           Appointment Overview

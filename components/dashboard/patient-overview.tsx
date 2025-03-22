@@ -78,7 +78,7 @@ export function PatientOverview() {
   };
 
   return (
-    <Card className="col-span-4 shadow-sm overflow-hidden">
+    <Card className="col-span-4 shadow-sm max-w-[1260px] mx-auto overflow-hidden">
       <CardHeader className="py-2 px-4 border-b bg-gray-50 dark:bg-gray-800">
         <CardTitle className="text-lg font-semibold">
           Patient Overview
