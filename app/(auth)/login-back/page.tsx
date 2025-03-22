@@ -9,7 +9,7 @@ export default async function Home() {
   } else if (session?.user.role === "doctor" || "nurse" || "receptionist") {
     redirect("/staff");
   } else if (session?.user.role === "admin") {
-    redirect("/admin");
+    redirect("/patients");
   }
   return redirect("/login");
 }
