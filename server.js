@@ -1,7 +1,9 @@
-const { createServer } = require("http");
+const { createServer: createHttpServer } = require("http");
+const { createServer: createHttpsServer } = require("https");
 const { parse } = require("url");
 const next = require("next");
 const { WebSocketServer } = require("ws");
+const fs = require("fs");
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -16,10 +18,27 @@ const CHANNELS = {
 };
 
 app.prepare().then(() => {
-  const server = createServer((req, res) => {
-    const parsedUrl = parse(req.url, true);
-    handle(req, res, parsedUrl);
-  });
+  let server;
+
+  if (dev) {
+    // Use HTTP for development
+    server = createHttpServer((req, res) => {
+      const parsedUrl = parse(req.url, true);
+      handle(req, res, parsedUrl);
+    });
+  } else {
+    // Use HTTPS for production
+    // You need to provide SSL certificate and key files
+    const sslOptions = {
+      key: fs.readFileSync(process.env.SSL_KEY_PATH || "./ssl/key.pem"),
+      cert: fs.readFileSync(process.env.SSL_CERT_PATH || "./ssl/cert.pem"),
+    };
+
+    server = createHttpsServer(sslOptions, (req, res) => {
+      const parsedUrl = parse(req.url, true);
+      handle(req, res, parsedUrl);
+    });
+  }
 
   // Initialize WebSocket server
   const wss = new WebSocketServer({
