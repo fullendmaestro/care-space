@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PatientsTable } from "@/components/tables/patient/patient-table";
 import usePatients from "@/hooks/usePatients";
+import { PatientOverview } from "@/components/dashboard/patient-overview";
 
 export default function PatientsPage() {
   const [page, setPage] = useState(1);
@@ -23,6 +24,8 @@ export default function PatientsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Patient Management</h1>
       </div>
+
+      <PatientOverview />
 
       <Tabs defaultValue="all" onValueChange={setActiveStatus}>
         <TabsList>

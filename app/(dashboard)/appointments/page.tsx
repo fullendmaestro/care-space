@@ -7,6 +7,7 @@ import {
   TableSkeleton,
 } from "@/components/tables/appointment/appointment-table";
 import useAppointments from "@/hooks/useAppointments";
+import { AppointmentOverview } from "@/components/dashboard/appointment-overview";
 
 export default function AppointmentsPage() {
   const [page, setPage] = useState(1);
@@ -26,6 +27,8 @@ export default function AppointmentsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Appointment Management</h1>
       </div>
+
+      <AppointmentOverview />
 
       <Tabs defaultValue="all" onValueChange={setActiveStatus}>
         <TabsList>
