@@ -57,6 +57,13 @@ export async function DELETE(
     const params = await segmentData.params;
     const id = params.id;
     await deleteMedicalRecord(id);
+    if (global.broadcastUpdate) {
+      console.log("broadcasting");
+      global.broadcastUpdate("medical_records", {
+        action: "create",
+        data: "record created",
+      });
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting medical record:", error);

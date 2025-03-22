@@ -120,6 +120,13 @@ export async function POST(request: Request) {
     };
 
     await createAppointment(appointment);
+    // Broadcast the update to all subscribed clients
+    if (global.broadcastUpdate) {
+      global.broadcastUpdate("appointments", {
+        action: "create",
+        data: "appointment created",
+      });
+    }
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
     console.error("Error creating appointment:", error);

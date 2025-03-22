@@ -196,6 +196,12 @@ export async function registerPatient(formData: FormData) {
         status: "Discharged",
         details: patientDetail,
       });
+      if (global.broadcastUpdate) {
+        global.broadcastUpdate("patients", {
+          action: "create",
+          data: "patient created",
+        });
+      }
     }
 
     // Sign in the user
@@ -277,6 +283,12 @@ export async function registerStaff(formData: FormData) {
         isActive: true,
         details: staffDetails,
       });
+      if (global.broadcastUpdate) {
+        global.broadcastUpdate("staff", {
+          action: "create",
+          data: "staff created",
+        });
+      }
     }
 
     // Sign in the user

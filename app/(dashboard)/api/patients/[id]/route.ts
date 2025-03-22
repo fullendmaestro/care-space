@@ -46,6 +46,12 @@ export async function DELETE(
     const id = params.id;
 
     await deletePatient(id);
+    if (global.broadcastUpdate) {
+      global.broadcastUpdate("patients", {
+        action: "create",
+        data: "record created",
+      });
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(

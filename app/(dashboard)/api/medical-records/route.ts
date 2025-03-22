@@ -101,6 +101,13 @@ export async function POST(request: Request) {
     };
 
     await createMedicalRecord(record);
+    // Broadcast the update to all subscribed clients
+    if (global.broadcastUpdate) {
+      global.broadcastUpdate("medical_records", {
+        action: "update",
+        data: "record created",
+      });
+    }
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
     console.error("Error creating medical record:", error);

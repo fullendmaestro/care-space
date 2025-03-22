@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -29,6 +29,7 @@ import { StaffDeleteModal } from "@/components/tables/staff/staff-delete-modal";
 import axios from "axios";
 import { toast } from "sonner";
 import { Staff } from "@/types";
+import useWebSocket from "react-use-websocket";
 
 interface StaffTableProps {
   data: Staff[];
@@ -59,6 +60,30 @@ export function StaffTable({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
   const totalPages = Math.ceil(totalItems / pageSize);
+
+  const { sendJsonMessage } = useWebSocket("ws://localhost:3000", {
+    onOpen: () => {
+      console.log("WebSocket connected");
+      sendJsonMessage({ type: "subscribe", channel: "staff" });
+    },
+    onMessage: (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === "update" && message.channel === "staff") {
+        console.log("Received update for staff:", message.data);
+        if (onRefresh) onRefresh();
+      }
+    },
+    onClose: () => {
+      console.log("WebSocket disconnected");
+    },
+    shouldReconnect: () => true,
+  });
+
+  useEffect(() => {
+    return () => {
+      sendJsonMessage({ type: "unsubscribe", channel: "staff" });
+    };
+  }, [sendJsonMessage]);
 
   const handleAddStaff = async (formData: any) => {
     try {
