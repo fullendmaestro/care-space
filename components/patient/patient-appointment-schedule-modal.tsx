@@ -1,8 +1,9 @@
 import { Modal } from "@/components/ui/modal";
 import { useState } from "react";
-import { AddAppointmentForm } from "@/components/forms/add-appointment-form";
+import { PatientAppointmentForm } from "@/components/patient/patient-appointment-form";
 import axios from "axios";
 import { toast } from "sonner";
+import { createAppointment } from "@/app/(patient)/action";
 
 interface PatientAppointmentScheduleModalProps {
   isOpen: boolean;
@@ -23,7 +24,7 @@ export function PatientAppointmentScheduleModal({
     try {
       setIsSubmitting(true);
       const dataWithDefaults = { ...formData, patientId, status: "Pending" };
-      await axios.post("/api/appointments", dataWithDefaults);
+      await createAppointment(dataWithDefaults);
       toast.success("Appointment scheduled successfully with Pending status");
       onClose();
       if (onRefresh) onRefresh();
@@ -42,7 +43,10 @@ export function PatientAppointmentScheduleModal({
       isOpen={isOpen}
       onClose={onClose}
     >
-      <AddAppointmentForm onSubmit={handleSubmit} />
+      <PatientAppointmentForm
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+      />
     </Modal>
   );
 }

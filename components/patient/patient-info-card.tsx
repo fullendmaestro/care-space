@@ -40,25 +40,29 @@ export function PatientInfoCard({ patient }: PatientInfoCardProps) {
           <div className="flex items-center text-sm">
             <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">Age:</span>
-            <span className="ml-auto font-medium">{patient.age} years</span>
+            <span className="ml-auto font-medium">
+              {patient.details.age} years
+            </span>
           </div>
           <div className="flex items-center text-sm">
             <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">Gender:</span>
-            <span className="ml-auto font-medium">{patient.gender}</span>
+            <span className="ml-auto font-medium">
+              {patient.details.gender}
+            </span>
           </div>
           <div className="flex items-center text-sm">
             <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">Blood Group:</span>
             <span className="ml-auto font-medium">
-              {patient.bloodGroup || "Not specified"}
+              {patient.details.bloodGroup || "Not specified"}
             </span>
           </div>
           <div className="flex items-center text-sm">
             <Phone className="mr-2 h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">Phone:</span>
             <span className="ml-auto font-medium">
-              {patient.contactNumber || "Not specified"}
+              {patient.details.contactNumber || "Not specified"}
             </span>
           </div>
           <div className="flex items-center text-sm">
@@ -72,14 +76,14 @@ export function PatientInfoCard({ patient }: PatientInfoCardProps) {
             <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">Address:</span>
             <span className="ml-auto font-medium">
-              {patient.address || "Not specified"}
+              {patient.details.address || "Not specified"}
             </span>
           </div>
           <div className="flex items-center text-sm">
             <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">Date of Birth:</span>
             <span className="ml-auto font-medium">
-              {patient.dateOfBirth
+              {patient.details.dateOfBirth
                 ? formatDate(patient.dateOfBirth)
                 : "Not specified"}
             </span>

@@ -51,8 +51,6 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    console.log(body);
-
     // Validate required fields
     if (!body.patientEmail || !body.doctorEmail || !body.appointmentDate) {
       return NextResponse.json(

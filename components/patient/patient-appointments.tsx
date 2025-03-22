@@ -13,17 +13,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import axios from "axios";
 import { toast } from "sonner";
+import {
+  getPatientAppointments,
+  getUpcomingAppointments,
+} from "@/app/(patient)/action";
 
 interface PatientAppointmentsProps {
   patientId: string;
-  showUpcoming?: boolean;
+  upcoming?: boolean;
 }
 
 export function PatientAppointments({
   patientId,
-  showUpcoming = false,
+  upcoming = false,
 }: PatientAppointmentsProps) {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,10 +34,10 @@ export function PatientAppointments({
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(
-          `/api/appointments/by-pid?patientId=${patientId}`
-        );
-        setAppointments(response.data);
+        const data = upcoming
+          ? await getUpcomingAppointments(patientId)
+          : await getPatientAppointments(patientId);
+        setAppointments(data);
       } catch (error) {
         console.error("Error fetching appointments:", error);
         toast.error("Failed to load appointments");
@@ -46,7 +49,7 @@ export function PatientAppointments({
     if (patientId) {
       fetchAppointments();
     }
-  }, [patientId]);
+  }, [patientId, upcoming]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
