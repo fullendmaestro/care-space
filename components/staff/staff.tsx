@@ -1,12 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  getStaffProfile,
-  getDoctorAppointments,
-  getDoctorTodaysAppointments,
-} from "@/app/(staff)/actions";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -22,40 +17,15 @@ import { StaffInfoCard } from "@/components/staff/staff-info-card";
 import { StaffAppointments } from "@/components/staff/staff-appointments";
 import { StaffPatients } from "@/components/staff/staff-patients";
 import { StaffSchedule } from "@/components/staff/staff-schedule";
-import { toast } from "sonner";
 
-export function StaffDashboard({ session }: { session: any }) {
+export function StaffDashboard({
+  session,
+  staff,
+}: {
+  session: any;
+  staff: any;
+}) {
   const router = useRouter();
-  const [staff, setStaff] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchStaffData = async () => {
-      try {
-        if (session?.user?.email) {
-          const staffData = await getStaffProfile(session?.user?.email);
-          setStaff(staffData);
-        }
-      } catch (error) {
-        console.error("Error fetching staff data:", error);
-        toast.error(
-          error instanceof Error ? error.message : "Failed to load staff data"
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchStaffData();
-  }, [session]);
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading staff profile...
-      </div>
-    );
-  }
 
   if (!staff) {
     return (
