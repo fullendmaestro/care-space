@@ -51,7 +51,7 @@ export function PatientsTable({
   pageSize,
   onRefresh,
 }: PatientsTableProps) {
-  const { sendJsonMessage } = useWebSocket("ws://localhost:3000", {
+  const { sendJsonMessage } = useWebSocket("ws://localhost:3000/ws", {
     onOpen: () => {
       console.log("WebSocket connected");
       sendJsonMessage({ type: "subscribe", channel: "patients" });

@@ -22,7 +22,10 @@ app.prepare().then(() => {
   });
 
   // Initialize WebSocket server
-  const wss = new WebSocketServer({ server });
+  const wss = new WebSocketServer({
+    server,
+    path: "/ws", // Add this line to specify a dedicated path
+  });
 
   // Store clients and their subscriptions
   const clients = new Map();

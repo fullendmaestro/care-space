@@ -61,14 +61,14 @@ export function StaffTable({
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
   const totalPages = Math.ceil(totalItems / pageSize);
 
-  const { sendJsonMessage } = useWebSocket("ws://localhost:3000", {
+  const { sendJsonMessage } = useWebSocket("ws://localhost:3000/ws", {
     onOpen: () => {
       console.log("WebSocket connected");
       sendJsonMessage({ type: "subscribe", channel: "staff" });
     },
     onMessage: (event) => {
       const message = JSON.parse(event.data);
-      if (message.type === "update" && message.channel === "staff") {
+      if (message.channel === "staff") {
         console.log("Received update for staff:", message.data);
         if (onRefresh) onRefresh();
       }

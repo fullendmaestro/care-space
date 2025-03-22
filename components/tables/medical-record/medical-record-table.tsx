@@ -75,7 +75,7 @@ export function MedicalRecordsTable({
   );
   const totalPages = Math.ceil(totalItems / pageSize);
 
-  const { sendJsonMessage } = useWebSocket("ws://localhost:3000", {
+  const { sendJsonMessage } = useWebSocket("ws://localhost:3000/ws", {
     onOpen: () => {
       console.log("WebSocket connected");
       sendJsonMessage({ type: "subscribe", channel: "medical_records" });
@@ -83,7 +83,7 @@ export function MedicalRecordsTable({
     onMessage: (event) => {
       const message = JSON.parse(event.data);
       if (message.channel === "medical_records") {
-        console.log("Received update for medical records:", message.data);
+        console.log("Received update for medical records:", message);
         if (onRefresh) onRefresh();
       }
     },
