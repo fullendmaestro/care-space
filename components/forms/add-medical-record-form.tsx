@@ -36,7 +36,7 @@ export function AddMedicalRecordForm({
 
   const [formData, setFormData] = useState({
     patientEmail: initialData.patientEmail || "",
-    doctorEmail: initialData.doctorId || "",
+    doctorEmail: initialData.doctorEmail || "",
     diagnosis: initialData.diagnosis || "",
     treatment: initialData.treatment || "",
     prescription: initialData.prescription || "",
@@ -85,6 +85,7 @@ export function AddMedicalRecordForm({
         <Input
           placeholder="please enter the doctor user email"
           onChange={(e) => handleChange("doctorEmail", e.target.value)}
+          value={formData.doctorEmail}
           type="email"
           required
         />
