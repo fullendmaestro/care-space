@@ -28,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { DatePicker } from "@/components/ui/date-picker";
 import { StepIndicator } from "@/components/auth/step-indicator";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { FileUpload } from "@/components/auth/file-upload";
 
 export default function PatientRegistrationPage() {
   const router = useRouter();
@@ -38,6 +39,7 @@ export default function PatientRegistrationPage() {
     email: "",
     password: "",
     confirmPassword: "",
+    image: "",
     age: "",
     gender: "",
     contactNumber: "",
@@ -110,6 +112,7 @@ export default function PatientRegistrationPage() {
       formDataObj.append("name", formData.name);
       formDataObj.append("email", formData.email);
       formDataObj.append("password", formData.password);
+      formDataObj.append("image", formData.image);
       formDataObj.append("age", formData.age);
       formDataObj.append("gender", formData.gender);
       formDataObj.append("contactNumber", formData.contactNumber);
@@ -207,6 +210,16 @@ export default function PatientRegistrationPage() {
                   onChange={(e) =>
                     updateFormData("confirmPassword", e.target.value)
                   }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Upload Profile</Label>
+                <FileUpload
+                  label="Profile Photo"
+                  accept="image/*"
+                  onUploadComplete={(url: string) => {
+                    updateFormData("image", url);
+                  }}
                 />
               </div>
             </>

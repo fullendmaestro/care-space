@@ -25,6 +25,7 @@ const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  image: z.string().optional(),
   role: z.string(),
 });
 
@@ -105,6 +106,7 @@ export async function registerPatient(formData: FormData) {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const image = formData.get("image") as string;
   const age = formData.get("age")
     ? Number.parseInt(formData.get("age") as string)
     : undefined;
@@ -125,6 +127,7 @@ export async function registerPatient(formData: FormData) {
     email,
     password,
     role: "patient",
+    image,
     age,
     gender,
     contactNumber,
@@ -152,7 +155,7 @@ export async function registerPatient(formData: FormData) {
     }
 
     // Create user
-    await createUser(email, password, name, "patient");
+    await createUser(email, password, name, "patient", image);
 
     // Generate a unique patient ID
     const patientId = generatePatientId();
