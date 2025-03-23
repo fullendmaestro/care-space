@@ -6,6 +6,10 @@ A comprehensive web application for managing hospital operations, patient care, 
 
 ## Features
 
+![Digram](https://github.com/fullendmaestro/care-space/blob/main/diagram.png?raw=true)
+
+## Features
+
 - **Multi-role Authentication**: Secure login for administrators, staff, and patients
 - **Patient Management**: Register, view, and update patient information
 - **Staff Management**: Manage doctors, nurses, and other hospital staff
