@@ -18,6 +18,7 @@ import Providers from "@/components/tooltip-provider";
 import TooltipProvider from "@/components/tooltip-provider";
 import { auth } from "../(auth)/auth";
 import { User } from "@/components/user";
+import { redirect } from "next/navigation";
 
 export default async function StaffLayout({
   children,
@@ -26,8 +27,12 @@ export default async function StaffLayout({
 }) {
   const session = await auth();
 
-  if (!session || !["doctor", "nurse", "admin"].includes(session?.user?.role)) {
-    return <div>Access denied. Please log in as a staff member.</div>;
+  if (
+    session?.user.role !== "doctor" &&
+    session?.user.role !== "nurse" &&
+    session?.user.role !== "receptionist"
+  ) {
+    redirect("/login-back");
   }
 
   return (

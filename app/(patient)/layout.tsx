@@ -16,6 +16,7 @@ import { Analytics } from "@vercel/analytics/react";
 import Providers from "@/components/tooltip-provider";
 import { auth } from "../(auth)/auth";
 import { User } from "@/components/user";
+import { redirect } from "next/navigation";
 
 export default async function PatientLayout({
   children,
@@ -24,8 +25,8 @@ export default async function PatientLayout({
 }) {
   const session = await auth();
 
-  if (!session || session.user.role !== "patient") {
-    return <div>Access denied. Please log in as a patient.</div>;
+  if (session?.user.role !== "patient") {
+    redirect("/login-back");
   }
 
   return (

@@ -33,6 +33,7 @@ import { NavItem } from "@/components/nav-item";
 import { SearchInput } from "@/components/search";
 import Providers from "@/components/tooltip-provider";
 import { auth } from "../(auth)/auth";
+import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   children,
@@ -40,6 +41,9 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
+  if (session?.user.role !== "admin") {
+    redirect("/login-back");
+  }
   return (
     <Providers>
       <main className="flex min-h-screen w-full flex-col bg-muted/40">
